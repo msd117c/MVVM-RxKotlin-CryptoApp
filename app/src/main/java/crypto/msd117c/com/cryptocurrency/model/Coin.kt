@@ -3,7 +3,7 @@ package crypto.msd117c.com.cryptocurrency.model
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-class Response {
+class Coin {
     @SerializedName("id")
     @Expose
     private var id: String? = null

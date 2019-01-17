@@ -6,9 +6,9 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor() : ViewModel() {
     private val retrofitFactory = RetrofitFactory()
+    val coinsList = retrofitFactory.getCoinData()
 
-    fun reloadData(): RetrofitFactory {
+    fun reloadData() {
         retrofitFactory.retrieveResponse()
-        return retrofitFactory
     }
 }
