@@ -7,6 +7,9 @@ import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.ERROR
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADED
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADING
 import crypto.msd117c.com.cryptocurrency.util.NetworkManager
 import javax.inject.Inject
 
@@ -30,38 +33,47 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
             else -> GridLayoutManager(activity, columnCount)
         }
         activity.getBinding().swipe.setOnRefreshListener {
-            checkConnectionAndLoadData()
+            retrieveData()
         }
+
+        viewModel.state.observe(activity, Observer {
+            when(it) {
+                LOADING -> {
+                    activity.getBinding().list.adapter = null
+                    activity.getBinding().swipe.isRefreshing = true
+                }
+                LOADED -> {
+                    activity.getBinding().list.adapter = null
+                    activity.getBinding().list.adapter = RecyclerViewAdapter(viewModel.getData(), this)
+                    activity.getBinding().swipe.isRefreshing = false
+                }
+                ERROR -> {
+                    activity.getBinding().list.adapter = null
+                    AlertDialog.Builder(activity).setMessage("There was a problem while loading data. Please retry")
+                        .setPositiveButton("Retry") {_, _ -> retrieveData() }
+                        .setNegativeButton("Quit") {_, _ -> activity.finish()}
+                        .show()
+                    activity.getBinding().swipe.isRefreshing = false
+                }
+            }
+        })
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resumeActivity() {
-        checkConnectionAndLoadData()
+        retrieveData()
     }
 
-    private fun checkConnectionAndLoadData() {
-        activity.getBinding().list.adapter = null
+    private fun retrieveData() {
         if (NetworkManager.verifyAvailableNetwork(activity)) {
-            retrieveAndPopulateList()
+            viewModel.loadData()
         } else {
             AlertDialog.Builder(activity).setMessage("There is no Internet")
-                .setPositiveButton("Retry") {_, _ -> checkConnectionAndLoadData() }
+                .setPositiveButton("Retry") {_, _ -> viewModel.loadData() }
                 .setNegativeButton("Quit") {_, _ -> activity.finish()}
                 .show()
-            activity.getBinding().swipe.isRefreshing = false
         }
     }
-
-    private fun retrieveAndPopulateList() = viewModel.coinsList.observe(activity, Observer {
-        if (it != null && it.isNotEmpty()) {
-            activity.getBinding().list.adapter = RecyclerViewAdapter(it, this)
-        } else {
-            AlertDialog.Builder(activity).setMessage("Error retrieving data, please refresh")
-                .setNeutralButton("Ok", null)
-                .show()
-        }
-        activity.getBinding().swipe.isRefreshing = false
-    })
 
     override fun onListFragmentInteraction(item: Coin?) {
         val name = item!!.getName()
