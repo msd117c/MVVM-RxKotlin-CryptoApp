@@ -51,6 +51,7 @@ class RecyclerViewAdapter(
                 View.GONE -> {
                     holder.itemView.isActivated = true
                     holder.itemDataBinding.details.visibility = View.VISIBLE
+                    holder.itemDataBinding.separator2.visibility = View.VISIBLE
                     if (expandedPosition != -1 && expandedPosition != position)
                     {
                         if ((holder.parent as RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
@@ -58,9 +59,12 @@ class RecyclerViewAdapter(
                                     false
                             ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder).itemDataBinding.details.visibility =
                                     View.GONE
+                            ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder).itemDataBinding.separator2.visibility =
+                                    View.GONE
                         }
                     }
                     holder.itemDataBinding.details.animate().alpha(1f).startDelay = 500
+                    holder.itemDataBinding.separator2.animate().alpha(1f).startDelay = 500
                     expandedPosition = position
                     val manager = (holder.parent as RecyclerView).layoutManager
                     val distance: Int
@@ -72,12 +76,15 @@ class RecyclerViewAdapter(
                         (p - (p - 5)) * height
                     else
                         p * height
+
                     (manager as LinearLayoutManager).scrollToPositionWithOffset(position, distance)
                 }
                 else -> {
                     holder.itemView.isActivated = false
                     holder.itemDataBinding.details.visibility = View.GONE
+                    holder.itemDataBinding.separator2.visibility = View.GONE
                     holder.itemDataBinding.details.alpha = 0f
+                    holder.itemDataBinding.separator2.alpha = 0f
                 }
             }
             TransitionManager.beginDelayedTransition(holder.parent)
@@ -110,6 +117,7 @@ class RecyclerViewAdapter(
             itemDataBinding.percentage.setTextColor(color)
             itemDataBinding.growth.setImageDrawable(drawable)
             itemDataBinding.details.visibility = View.GONE
+            itemDataBinding.separator2.visibility = View.GONE
         }
     }
 
