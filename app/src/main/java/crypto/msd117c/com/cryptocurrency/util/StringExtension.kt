@@ -5,7 +5,10 @@ import java.text.DecimalFormat
 
 val String?.normalize: String
     get() {
+        if (this != null) {
         val df = DecimalFormat("#.##")
         df.roundingMode = RoundingMode.CEILING
         val number = this!!.toDouble()
-        return df.format(number) }
+        return df.format(number) } else {
+            return "N/A"
+        }}
