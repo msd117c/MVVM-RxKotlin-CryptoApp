@@ -7,8 +7,4 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
     private val retrofitFactory = RetrofitFactory()
     val coinsList = retrofitFactory.getCoinData()
-
-    fun reloadData() {
-        retrofitFactory.retrieveResponse()
-    }
 }

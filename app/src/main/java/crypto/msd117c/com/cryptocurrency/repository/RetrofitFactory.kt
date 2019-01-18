@@ -16,7 +16,7 @@ class RetrofitFactory {
         retrieveResponse()
     }
 
-    fun retrieveResponse() {
+    private fun retrieveResponse() {
         disposable.add(RetrofitProvider.provideServiceInterface()
                 .retrieveCoins()
                 .subscribeOn(Schedulers.io())
