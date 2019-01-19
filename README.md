@@ -10,6 +10,6 @@ This application has been made making use of the following technologies:
 - DataBinding
 - LiveData
 
-<img src="http://msd117.es/cv/images/first.png" width="648" height="1152" />
+<img src="http://msd117.es/cv/images/first.png" width="432" height="768" />
 
-![alt text](http://msd117.es/cv/images/second.png)
+<img src="http://msd117.es/cv/images/second.png" width="432" height="768" />
