@@ -2,7 +2,6 @@ package crypto.msd117c.com.cryptocurrency.modules.main.ui
 
 import android.app.AlertDialog
 import android.arch.lifecycle.*
-import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
 import crypto.msd117c.com.cryptocurrency.R
@@ -21,10 +20,7 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
         activity.lifecycle.addObserver(this)
     }
 
-    @Inject
-    lateinit var viewModel: MainViewModel
-
-    private val columnCount = 1
+    @Inject lateinit var viewModel: MainViewModel
     private lateinit var alertDialog: AlertDialog
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -35,6 +31,8 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
 
     private fun configureViewModel() {
         viewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+
+        // Update UI according to ViewModel's state
         viewModel.state.observe(activity, Observer {
             when (it) {
                 is ViewModelStates.Loading -> {
@@ -57,10 +55,8 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
     }
 
     private fun configureView() {
-        activity.getBinding().list.layoutManager = when {
-            columnCount <= 1 -> LinearLayoutManager(activity)
-            else -> GridLayoutManager(activity, columnCount)
-        }
+        activity.getBinding().list.layoutManager = LinearLayoutManager(activity)
+
         activity.getBinding().swipe.setOnRefreshListener {
             viewModel.retrieveResponse()
         }
@@ -81,8 +77,7 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
         Toast.makeText(activity, item!!.getName(), Toast.LENGTH_LONG).show()
     }
 
-    // Auxiliary Functions
-
+    // Auxiliary Functions to make the code more clear
     private fun showDialog(errorType: Int) {
         alertDialog = AlertDialog.Builder(activity)
             .setMessage(
@@ -103,6 +98,4 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
             alertDialog.dismiss()
         }
     }
-
-    //
 }
