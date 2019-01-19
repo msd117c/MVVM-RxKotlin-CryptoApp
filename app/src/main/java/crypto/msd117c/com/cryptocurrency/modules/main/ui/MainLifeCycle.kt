@@ -39,6 +39,9 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
                     activity.getBinding().swipe.isRefreshing = true
                 }
                 is ViewModelStates.Loaded -> {
+                    // Clear the adapter
+                    activity.getBinding().list.adapter = null
+                    // Load the adapter
                     activity.getBinding().list.adapter = RecyclerViewAdapter(viewModel.getData(), this)
                     activity.getBinding().swipe.isRefreshing = false
                 }
@@ -56,6 +59,8 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
 
     private fun configureView() {
         activity.getBinding().list.layoutManager = LinearLayoutManager(activity)
+        // Clear the adapter when create all
+        activity.getBinding().list.adapter = null
 
         activity.getBinding().swipe.setOnRefreshListener {
             viewModel.retrieveResponse()
@@ -64,7 +69,7 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resumeActivity() {
-        viewModel.loadData(NetworkManager.verifyAvailableNetwork(activity))
+        checkData()
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
@@ -78,6 +83,12 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
     }
 
     // Auxiliary Functions to make the code more clear
+    private fun checkData() {
+        if (activity.getBinding().list.adapter == null) {
+            viewModel.loadData(NetworkManager.verifyAvailableNetwork(activity))
+        }
+    }
+
     private fun showDialog(errorType: Int) {
         alertDialog = AlertDialog.Builder(activity)
             .setMessage(
