@@ -5,12 +5,14 @@ import android.arch.lifecycle.*
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
+import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.ERROR
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADED
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADING
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.NO_CONNECTION_ERROR
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
 import crypto.msd117c.com.cryptocurrency.util.NetworkManager
+import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import javax.inject.Inject
 
 class MainLifeCycle @Inject constructor(private val activity: MainActivity) : LifecycleObserver,
@@ -23,60 +25,84 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
     lateinit var viewModel: MainViewModel
 
     private val columnCount = 1
+    private lateinit var alertDialog: AlertDialog
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     fun setup() {
+        configureViewModel()
+        configureView()
+    }
+
+    private fun configureViewModel() {
         viewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
-
-        activity.getBinding().list.layoutManager = when {
-            columnCount <= 1 -> LinearLayoutManager(activity)
-            else -> GridLayoutManager(activity, columnCount)
-        }
-        activity.getBinding().swipe.setOnRefreshListener {
-            retrieveData()
-        }
-
         viewModel.state.observe(activity, Observer {
-            when(it) {
-                LOADING -> {
-                    activity.getBinding().list.adapter = null
+            when (it) {
+                is ViewModelStates.Loading -> {
                     activity.getBinding().swipe.isRefreshing = true
                 }
-                LOADED -> {
-                    activity.getBinding().list.adapter = null
+                is ViewModelStates.Loaded -> {
                     activity.getBinding().list.adapter = RecyclerViewAdapter(viewModel.getData(), this)
                     activity.getBinding().swipe.isRefreshing = false
                 }
-                ERROR -> {
-                    activity.getBinding().list.adapter = null
-                    AlertDialog.Builder(activity).setMessage("There was a problem while loading data. Please retry")
-                        .setPositiveButton("Retry") {_, _ -> retrieveData() }
-                        .setNegativeButton("Quit") {_, _ -> activity.finish()}
-                        .show()
+                is ViewModelStates.Error -> {
                     activity.getBinding().swipe.isRefreshing = false
+                    when (it.type) {
+                        NO_CONNECTION_ERROR -> showDialog(NO_CONNECTION_ERROR)
+                        DATA_ERROR -> showDialog(DATA_ERROR)
+                        else -> showDialog(UNKNOWN_ERROR)
+                    }
                 }
             }
         })
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    fun resumeActivity() {
-        retrieveData()
-    }
-
-    private fun retrieveData() {
-        if (NetworkManager.verifyAvailableNetwork(activity)) {
-            viewModel.loadData()
-        } else {
-            AlertDialog.Builder(activity).setMessage("There is no Internet")
-                .setPositiveButton("Retry") {_, _ -> viewModel.loadData() }
-                .setNegativeButton("Quit") {_, _ -> activity.finish()}
-                .show()
+    private fun configureView() {
+        activity.getBinding().list.layoutManager = when {
+            columnCount <= 1 -> LinearLayoutManager(activity)
+            else -> GridLayoutManager(activity, columnCount)
+        }
+        activity.getBinding().swipe.setOnRefreshListener {
+            viewModel.retrieveResponse()
         }
     }
 
-    override fun onListFragmentInteraction(item: Coin?) {
-        val name = item!!.getName()
-        Toast.makeText(activity, name, Toast.LENGTH_LONG).show()
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    fun resumeActivity() {
+        viewModel.loadData(NetworkManager.verifyAvailableNetwork(activity))
     }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun stopView() {
+        dismissDialog()
+        activity.getBinding().swipe.isRefreshing = false
+    }
+
+    override fun onListFragmentInteraction(item: Coin?) {
+        Toast.makeText(activity, item!!.getName(), Toast.LENGTH_LONG).show()
+    }
+
+    // Auxiliary Functions
+
+    private fun showDialog(errorType: Int) {
+        alertDialog = AlertDialog.Builder(activity)
+            .setMessage(
+                when (errorType) {
+                    NO_CONNECTION_ERROR -> activity.getString(R.string.no_connection)
+                    DATA_ERROR -> activity.getString(R.string.data_error)
+                    else -> activity.getString(R.string.unknown_error)
+                }
+            )
+            .setPositiveButton(activity.getString(R.string.retry)) { _, _ -> viewModel.retrieveResponse() }
+            .setNegativeButton(activity.getString(R.string.exit)) { _, _ -> activity.finish() }
+            .setCancelable(false)
+            .show()
+    }
+
+    private fun dismissDialog() {
+        if (::alertDialog.isInitialized && alertDialog.isShowing) {
+            alertDialog.dismiss()
+        }
+    }
+
+    //
 }

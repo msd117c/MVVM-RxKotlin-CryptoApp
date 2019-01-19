@@ -2,17 +2,19 @@ package crypto.msd117c.com.cryptocurrency.modules.main.ui
 
 import android.databinding.DataBindingUtil
 import android.graphics.Color
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.ItemLayoutBinding
 import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel
-import android.support.v7.widget.LinearLayoutManager
-import kotlinx.android.synthetic.main.fragment_item.view.*
 
 
 class RecyclerViewAdapter(
@@ -22,9 +24,11 @@ class RecyclerViewAdapter(
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
+    private var stateList = BooleanArray(mValues.size)
     private var expandedPosition = -1
 
     init {
+        stateList.all { false }
         mOnClickListener = View.OnClickListener { v ->
             val item = v.tag as Coin
             mListener?.onListFragmentInteraction(item)
@@ -38,7 +42,7 @@ class RecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
+        val item = mValues[holder.adapterPosition]
 
         with(holder.mView) {
             tag = item
@@ -46,48 +50,50 @@ class RecyclerViewAdapter(
         }
 
         holder.setViewModel(CoinViewModel(item))
-        holder.itemDataBinding.itemRow.setOnClickListener {
-            when(holder.itemDataBinding.details.visibility) {
-                View.GONE -> {
-                    holder.itemView.isActivated = true
-                    holder.itemDataBinding.details.visibility = View.VISIBLE
-                    holder.itemDataBinding.separator2.visibility = View.VISIBLE
-                    if (expandedPosition != -1 && expandedPosition != position)
-                    {
-                        if ((holder.parent as RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
-                            holder.parent.findViewHolderForAdapterPosition(expandedPosition)!!.itemView.isActivated =
-                                    false
-                            ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder).itemDataBinding.details.visibility =
-                                    View.GONE
-                            ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder).itemDataBinding.separator2.visibility =
-                                    View.GONE
-                        }
-                    }
-                    holder.itemDataBinding.details.animate().alpha(1f).startDelay = 500
-                    holder.itemDataBinding.separator2.animate().alpha(1f).startDelay = 500
-                    expandedPosition = position
-                    val manager = (holder.parent as RecyclerView).layoutManager
-                    val distance: Int
-                    val first = holder.parent.getChildAt(0)
-                    val height = first.height
-                    val current = holder.parent.getChildAdapterPosition(first)
-                    val p = Math.abs(position - current)
-                    distance = if (p > 5)
-                        (p - (p - 5)) * height
-                    else
-                        p * height
+        holder.mView.setOnClickListener {
+            val shouldExpand = holder.itemDataBinding.details.visibility == View.GONE
 
-                    (manager as LinearLayoutManager).scrollToPositionWithOffset(position, distance)
+            val transition = ChangeBounds()
+            transition.duration = 200
+
+            if (shouldExpand) {
+                if (expandedPosition != -1 && expandedPosition != holder.adapterPosition) {
+                    if ((holder.parent as RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
+                        ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder)
+                            .itemDataBinding.details.visibility = View.GONE
+                        stateList.all { false }
+                    }
                 }
-                else -> {
-                    holder.itemView.isActivated = false
-                    holder.itemDataBinding.details.visibility = View.GONE
-                    holder.itemDataBinding.separator2.visibility = View.GONE
-                    holder.itemDataBinding.details.alpha = 0f
-                    holder.itemDataBinding.separator2.alpha = 0f
+                expandedPosition = holder.adapterPosition
+                holder.itemDataBinding.details.visibility = VISIBLE
+
+                val manager = (holder.parent as RecyclerView).layoutManager
+                val viewHolderHeight = holder.itemDataBinding.itemRow.height
+
+                val firstVisiblePos =
+                    (holder.parent.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+
+                val relativePosition = holder.adapterPosition - firstVisiblePos
+                val remain = itemCount - firstVisiblePos + 1
+                val availableHeight = remain * viewHolderHeight
+                if (availableHeight >= viewHolderHeight + holder.itemDataBinding.details.height + relativePosition *
+                    viewHolderHeight
+                ) {
+                    (manager as LinearLayoutManager).scrollToPositionWithOffset(holder.adapterPosition, 0)
+                } else {
+                    val height = holder.parent.height
+                    val distance = holder.mView.height + holder.itemDataBinding.details.height
+                    (manager as LinearLayoutManager).scrollToPositionWithOffset(
+                        holder.adapterPosition,
+                        height - distance
+                    )
                 }
+            } else {
+                expandedPosition = -1
+                holder.itemDataBinding.details.visibility = GONE
             }
-            TransitionManager.beginDelayedTransition(holder.parent)
+
+            TransitionManager.beginDelayedTransition(holder.parent, transition)
         }
     }
 
@@ -98,12 +104,12 @@ class RecyclerViewAdapter(
 
         fun setViewModel(coin: CoinViewModel) {
             itemDataBinding.coin = coin
-            val drawable = when(coin.isPositiveBalance()) {
+            val drawable = when (coin.isPositiveBalance()) {
                 1 -> mView.context.getDrawable(R.drawable.ic_action_trending_up)
                 -1 -> mView.context.getDrawable(R.drawable.ic_action_trending_down)
                 else -> null
             }
-            val color = when(coin.isPositiveBalance()) {
+            val color = when (coin.isPositiveBalance()) {
                 1 -> {
                     Color.GREEN
                 }
@@ -114,10 +120,9 @@ class RecyclerViewAdapter(
                     Color.GRAY
                 }
             }
-            itemDataBinding.percentage.setTextColor(color)
+            itemDataBinding.percentage.setBackgroundColor(color)
             itemDataBinding.growth.setImageDrawable(drawable)
             itemDataBinding.details.visibility = View.GONE
-            itemDataBinding.separator2.visibility = View.GONE
         }
     }
 

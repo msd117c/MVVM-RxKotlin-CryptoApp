@@ -4,9 +4,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.ERROR
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADED
-import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.LOADING
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.NO_CONNECTION_ERROR
+import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -15,26 +15,47 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor() : ViewModel() {
     private val retrofitFactory = RetrofitFactory()
     private val disposable = CompositeDisposable()
-    val state = MutableLiveData<Int>()
+    val state = MutableLiveData<ViewModelStates>()
     private var list = ArrayList<Coin>()
 
-    fun loadData() {
-        state.value = LOADING
-        disposable.add(retrofitFactory.retrieveResponse()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe{
-                if (it != null && it.isNotEmpty()) {
-                    list.addAll(it)
-                    state.value = LOADED
-                } else {
-                    state.value = ERROR
-                }
+    fun loadData(connection: Boolean) {
+        if (!connection) {
+            if (list.isNotEmpty()) {
+                state.value = ViewModelStates.Loaded(list)
+                return
+            } else {
+                state.value = ViewModelStates.Error(DATA_ERROR)
+                return
             }
+        } else {
+            retrieveResponse()
+        }
+    }
+
+    fun retrieveResponse() {
+        state.value = ViewModelStates.Loading
+        disposable.add(
+            retrofitFactory.retrieveResponse()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    if (it != null && it.isNotEmpty()) {
+                        list.clear()
+                        list.addAll(it)
+                        state.value = ViewModelStates.Loaded(list)
+                    } else {
+                        state.value = ViewModelStates.Error(DATA_ERROR)
+                    }
+                }, { state.value = ViewModelStates.Error(NO_CONNECTION_ERROR) })
         )
     }
 
     fun getData(): List<Coin> {
         return list
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        disposable.clear()
     }
 }

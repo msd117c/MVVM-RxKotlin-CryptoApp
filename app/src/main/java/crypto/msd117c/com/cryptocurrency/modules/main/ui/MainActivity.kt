@@ -9,7 +9,8 @@ import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
-    @Inject lateinit var lifeCycle: MainLifeCycle
+    @Inject
+    lateinit var lifeCycle: MainLifeCycle
     private lateinit var mainActivityBinding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
