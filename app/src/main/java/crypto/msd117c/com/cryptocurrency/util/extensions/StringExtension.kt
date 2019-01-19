@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.util
+package crypto.msd117c.com.cryptocurrency.util.extensions
 
 import java.math.RoundingMode
 import java.text.DecimalFormat
@@ -19,11 +19,11 @@ val String?.normalize: String
 val String?.comafy: String
     get() {
         var inputNum = this
-        val splittedNum = this!!.split(".")
+        val splittedNum = this!!.split("")
         var decimalNum = ""
         if (splittedNum.size == 2) {
             inputNum = splittedNum[0]
-            decimalNum = "." + splittedNum[1]
+            decimalNum = "" + splittedNum[1]
         }
 
         val inputDouble = inputNum!!.toDouble()

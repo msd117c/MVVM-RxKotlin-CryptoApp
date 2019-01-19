@@ -2,9 +2,9 @@ package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import crypto.msd117c.com.cryptocurrency.model.Coin
-import crypto.msd117c.com.cryptocurrency.util.comafy
-import crypto.msd117c.com.cryptocurrency.util.normalize
-import crypto.msd117c.com.cryptocurrency.util.toDate
+import crypto.msd117c.com.cryptocurrency.util.extensions.comafy
+import crypto.msd117c.com.cryptocurrency.util.extensions.normalize
+import crypto.msd117c.com.cryptocurrency.util.extensions.toDate
 
 class CoinViewModel(private val coin: Coin) : ViewModel() {
 
