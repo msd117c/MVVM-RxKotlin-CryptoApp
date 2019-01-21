@@ -12,8 +12,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor() : ViewModel() {
-    private val retrofitFactory = RetrofitFactory()
+class MainViewModel @Inject constructor(private val retrofitFactory: RetrofitFactory) : ViewModel() {
     private val disposable = CompositeDisposable()
     val state = MutableLiveData<ViewModelStates>()
     private var list = ArrayList<Coin>()

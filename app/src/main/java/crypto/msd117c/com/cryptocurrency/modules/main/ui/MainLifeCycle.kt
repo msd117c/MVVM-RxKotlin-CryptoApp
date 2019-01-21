@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.arch.lifecycle.*
 import android.support.v7.widget.LinearLayoutManager
 import android.widget.Toast
-import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
@@ -13,9 +12,12 @@ import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
 import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import crypto.msd117c.com.cryptocurrency.util.NetworkManager
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
+import crypto.msd117c.com.cryptocurrency.R
+import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelFactory
+import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import javax.inject.Inject
 
-class MainLifeCycle @Inject constructor(private val activity: MainActivity) : LifecycleObserver,
+class MainLifeCycle @Inject constructor(private val activity: MainActivity, private val retrofitFactory: RetrofitFactory) : LifecycleObserver,
     RecyclerViewAdapter.OnListFragmentInteractionListener {
     init {
         activity.lifecycle.addObserver(this)
@@ -32,7 +34,7 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
     }
 
     private fun configureViewModel() {
-        viewModel = ViewModelProviders.of(activity).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(activity, ViewModelFactory(retrofitFactory)).get(MainViewModel::class.java)
 
         // Update UI according to ViewModel's state
         viewModel.state.observe(activity, Observer {

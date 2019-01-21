@@ -5,12 +5,15 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
+import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     @Inject
     lateinit var lifeCycle: MainLifeCycle
+    @Inject
+    lateinit var retrofitFactory: RetrofitFactory
     private lateinit var mainActivityBinding: MainActivityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
