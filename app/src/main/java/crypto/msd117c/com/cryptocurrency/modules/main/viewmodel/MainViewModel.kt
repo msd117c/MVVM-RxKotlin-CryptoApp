@@ -6,6 +6,7 @@ import crypto.msd117c.com.cryptocurrency.model.Coin
 import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.NO_CONNECTION_ERROR
+import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -37,6 +38,7 @@ class MainViewModel @Inject constructor(private val retrofitFactory: RetrofitFac
             retrofitFactory.retrieveResponse()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnError{ state.value = ViewModelStates.Error(UNKNOWN_ERROR)}
                 .subscribe({
                     if (it != null && it.isNotEmpty()) {
                         list.clear()
