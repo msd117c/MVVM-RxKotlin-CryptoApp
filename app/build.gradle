@@ -36,6 +36,11 @@ dependencies {
     implementation 'com.android.support:support-v4:28.0.0'
     implementation 'com.android.support:recyclerview-v7:28.0.0'
     testImplementation 'junit:junit:4.12'
+
+    // Mockito
+    testImplementation "org.mockito:mockito-core:$mockito_version"
+    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
+
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
@@ -53,7 +58,7 @@ dependencies {
     // rx java
     implementation "io.reactivex.rxjava2:rxjava:2.2.5"
 
-    // gson & retrofit
+    // JSON to Java & retrofit
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation "com.squareup.retrofit2:retrofit:2.5.0"
     implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"

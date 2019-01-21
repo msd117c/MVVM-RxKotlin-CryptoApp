@@ -50,10 +50,6 @@ class MainViewModel @Inject constructor() : ViewModel() {
         )
     }
 
-    fun getData(): List<Coin> {
-        return list
-    }
-
     override fun onCleared() {
         super.onCleared()
         disposable.clear()

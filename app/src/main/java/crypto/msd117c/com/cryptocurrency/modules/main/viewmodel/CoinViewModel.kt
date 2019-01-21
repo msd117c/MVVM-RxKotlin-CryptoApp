@@ -2,7 +2,7 @@ package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
 import android.arch.lifecycle.ViewModel
 import crypto.msd117c.com.cryptocurrency.model.Coin
-import crypto.msd117c.com.cryptocurrency.util.extensions.comafy
+import crypto.msd117c.com.cryptocurrency.util.extensions.comfy
 import crypto.msd117c.com.cryptocurrency.util.extensions.normalize
 import crypto.msd117c.com.cryptocurrency.util.extensions.toDate
 
@@ -19,7 +19,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getCoinUsd(): String {
         return if (coin.getPriceUsd() != null) {
-            "${coin.getPriceUsd().normalize.comafy}$"
+            "${coin.getPriceUsd().normalize.comfy}$"
         } else {
             "N/A"
         }
@@ -51,7 +51,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getMarketCap(): String {
         return if (coin.getMarketCapUsd() != null) {
-            "${coin.getMarketCapUsd()?.normalize.comafy} BTC"
+            "${coin.getMarketCapUsd()?.normalize.comfy} BTC"
         } else {
             "N/A"
         }
@@ -59,7 +59,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getPriceBtc(): String {
         return if (coin.getPriceBtc() != null) {
-            "${coin.getPriceBtc()?.normalize.comafy} BTC"
+            "${coin.getPriceBtc()?.normalize.comfy} BTC"
         } else {
             "N/A"
         }
@@ -67,7 +67,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getVolumeUsd24h(): String {
         return if (coin.get24hVolumeUsd() != null) {
-            "${coin.get24hVolumeUsd()?.normalize.comafy}$"
+            "${coin.get24hVolumeUsd()?.normalize.comfy}$"
         } else {
             "N/A"
         }
@@ -75,7 +75,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getAvailableSupply(): String {
         return if (coin.getAvailableSupply() != null) {
-            coin.getAvailableSupply()?.normalize.comafy
+            coin.getAvailableSupply()?.normalize.comfy
         } else {
             "N/A"
         }
@@ -83,7 +83,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getTotalSupply(): String {
         return if (coin.getTotalSupply() != null) {
-            coin.getTotalSupply()?.normalize.comafy
+            coin.getTotalSupply()?.normalize.comfy
         } else {
             "N/A"
         }
@@ -91,7 +91,7 @@ class CoinViewModel(private val coin: Coin) : ViewModel() {
 
     fun getMaxSupply(): String {
         return if (coin.getMaxSupply() != null) {
-            coin.getMaxSupply()?.normalize.comafy
+            coin.getMaxSupply()?.normalize.comfy
         } else {
             "N/A"
         }
