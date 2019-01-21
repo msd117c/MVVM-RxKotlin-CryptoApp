@@ -16,4 +16,6 @@
     <string name="percent_change_24h_label">Percent change 24h:</string>
     <string name="percent_change_7d_label">Percent change 7d:</string>
     <string name="last_update_label">Last update:</string>
+    <string name="decimal_separator">.</string>
+    <string name="thounsand_separator">,</string>
 </resources>

@@ -1,5 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.util.extensions
 
+import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import java.math.RoundingMode
 import java.text.DecimalFormat
 
@@ -19,15 +20,15 @@ val String?.normalize: String
 val String?.comafy: String
     get() {
         var inputNum = this
-        val splittedNum = this!!.split(",")
+        val splittedNum = this!!.split(GlobalValues.decimalSeparator)
         var decimalNum = ""
         if (splittedNum.size == 2) {
             inputNum = splittedNum[0]
-            decimalNum = "." + splittedNum[1]
+            decimalNum = GlobalValues.decimalSeparator + splittedNum[1]
         }
 
         val inputDouble = inputNum!!.toDouble()
-        val myFormatter = DecimalFormat("###,###")
+        val myFormatter = DecimalFormat("###${GlobalValues.thousandSeparator}###")
         val output = myFormatter.format(inputDouble)
 
         return output + decimalNum

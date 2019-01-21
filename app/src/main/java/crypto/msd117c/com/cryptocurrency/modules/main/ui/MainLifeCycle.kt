@@ -10,6 +10,7 @@ import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.NO_CONNECTION_ERROR
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
+import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import crypto.msd117c.com.cryptocurrency.util.NetworkManager
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import javax.inject.Inject
@@ -20,7 +21,8 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
         activity.lifecycle.addObserver(this)
     }
 
-    @Inject lateinit var viewModel: MainViewModel
+    @Inject
+    lateinit var viewModel: MainViewModel
     private lateinit var alertDialog: AlertDialog
 
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
@@ -36,13 +38,15 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
         viewModel.state.observe(activity, Observer {
             when (it) {
                 is ViewModelStates.Loading -> {
+                    // Clear the adapter
+                    activity.getBinding().list.adapter = null
                     activity.getBinding().swipe.isRefreshing = true
                 }
                 is ViewModelStates.Loaded -> {
                     // Clear the adapter
                     activity.getBinding().list.adapter = null
                     // Load the adapter
-                    activity.getBinding().list.adapter = RecyclerViewAdapter(viewModel.getData(), this)
+                    activity.getBinding().list.adapter = RecyclerViewAdapter(it.list, this)
                     activity.getBinding().swipe.isRefreshing = false
                 }
                 is ViewModelStates.Error -> {
@@ -69,6 +73,7 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
 
     @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     fun resumeActivity() {
+        setGlobalValues()
         checkData()
     }
 
@@ -83,6 +88,11 @@ class MainLifeCycle @Inject constructor(private val activity: MainActivity) : Li
     }
 
     // Auxiliary Functions to make the code more clear
+    private fun setGlobalValues() {
+        GlobalValues.decimalSeparator = activity.getString(R.string.decimal_separator)
+        GlobalValues.thousandSeparator = activity.getString(R.string.thounsand_separator)
+    }
+
     private fun checkData() {
         if (activity.getBinding().list.adapter == null) {
             viewModel.loadData(NetworkManager.verifyAvailableNetwork(activity))

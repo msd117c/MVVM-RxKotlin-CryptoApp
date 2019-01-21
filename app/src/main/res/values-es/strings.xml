@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">CryptoCurrency</string>
+    <string name="hold">-</string>
+    <string name="retry">Reintentar</string>
+    <string name="exit">Salir</string>
+    <string name="no_connection">No hay conexión</string>
+    <string name="data_error">Ha habido un problema.</string>
+    <string name="unknown_error">Error desconocido.</string>
+    <string name="btc_label">BTC:</string>
+    <string name="volume_usd_24h_label">Volumen USD 24h:</string>
+    <string name="market_capitalization_label">Capitalización en mercado:</string>
+    <string name="available_supply_label">Suministro disponible:</string>
+    <string name="total_supply_label">Suministro total:</string>
+    <string name="maximum_supply_label">Suministro máximo:</string>
+    <string name="percent_change_1h_label">Crecimiento 1h:</string>
+    <string name="percent_change_24h_label">Crecimiento 24h:</string>
+    <string name="percent_change_7d_label">Crecimiento 7d:</string>
+    <string name="last_update_label">Última actualización:</string>
+    <string name="decimal_separator">,</string>
+    <string name="thounsand_separator">.</string>
+</resources>
