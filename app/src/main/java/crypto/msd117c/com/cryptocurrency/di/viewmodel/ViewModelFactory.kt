@@ -5,6 +5,7 @@ import android.arch.lifecycle.ViewModelProvider
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 
+@Suppress("UNCHECKED_CAST")
 class ViewModelFactory(private val retrofitFactory: RetrofitFactory) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -38,7 +38,7 @@ class MainViewModel @Inject constructor(private val retrofitFactory: RetrofitFac
             retrofitFactory.retrieveResponse()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError{ state.value = ViewModelStates.Error(UNKNOWN_ERROR)}
+                .doOnError { state.value = ViewModelStates.Error(UNKNOWN_ERROR) }
                 .subscribe({
                     if (it != null && it.isNotEmpty()) {
                         list.clear()

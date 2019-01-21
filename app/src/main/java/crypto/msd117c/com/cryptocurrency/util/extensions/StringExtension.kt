@@ -7,7 +7,7 @@ import java.text.DecimalFormat
 val String?.normalize: String
     get() {
         return if (this != null && this.isNotBlank()) {
-            val df = DecimalFormat("#${GlobalValues.decimalSeparator}##")
+            val df = DecimalFormat("#.##")
             df.roundingMode = RoundingMode.CEILING
             val number = this.toDouble()
             df.format(number)
@@ -28,7 +28,7 @@ val String?.comfy: String
         }
 
         val inputDouble = inputNum!!.toDouble()
-        val myFormatter = DecimalFormat("###${GlobalValues.thousandSeparator}###")
+        val myFormatter = DecimalFormat("###,###")
         val output = myFormatter.format(inputDouble)
 
         return output + decimalNum
