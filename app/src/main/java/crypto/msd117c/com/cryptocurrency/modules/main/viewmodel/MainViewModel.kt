@@ -6,7 +6,7 @@ import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
-import crypto.msd117c.com.cryptocurrency.util.NetworkManager
+import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers

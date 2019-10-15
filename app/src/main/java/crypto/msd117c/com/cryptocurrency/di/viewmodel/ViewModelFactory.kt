@@ -4,7 +4,7 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
-import crypto.msd117c.com.cryptocurrency.util.NetworkManager
+import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")

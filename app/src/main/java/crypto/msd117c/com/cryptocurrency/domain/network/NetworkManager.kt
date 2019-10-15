@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.util
+package crypto.msd117c.com.cryptocurrency.domain.network
 
 import android.content.Context
 import android.net.ConnectivityManager
