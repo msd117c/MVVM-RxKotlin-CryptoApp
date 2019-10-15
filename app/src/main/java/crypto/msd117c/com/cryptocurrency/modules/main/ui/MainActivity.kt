@@ -16,7 +16,6 @@ import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import crypto.msd117c.com.cryptocurrency.util.Constants
 import crypto.msd117c.com.cryptocurrency.util.GlobalValues
-import crypto.msd117c.com.cryptocurrency.util.NetworkManager
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import dagger.android.AndroidInjection
 import javax.inject.Inject
@@ -30,10 +29,11 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
     lateinit var retrofitFactory: RetrofitFactory
 
     @Inject
-    lateinit var viewModel: MainViewModel
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var alertDialog: AlertDialog
     private lateinit var mainActivityBinding: MainActivityBinding
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
     }
 
     fun configureViewModel() {
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(retrofitFactory))
+        viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainViewModel::class.java)
 
         // Update UI according to ViewModel's state
@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
 
     fun checkData() {
         if (mainActivityBinding.list.adapter == null) {
-            viewModel.loadData(NetworkManager.verifyAvailableNetwork(this))
+            viewModel.loadData()
         }
     }
 

@@ -56,7 +56,7 @@ class MainViewModelTest {
     }
 
     private fun loadDataWithoutConnectionAndNoCachedData() {
-        this.mainViewModel.loadData(false)
+        this.mainViewModel.loadData()
 
         assert(this.mainViewModel.state.value == ViewModelStates.Error(DATA_ERROR))
         verifyZeroInteractions(this.mainActivity)
@@ -68,7 +68,7 @@ class MainViewModelTest {
         this.listOfCoins.add(Coin())
 
         `when`(retrofitFactory.retrieveResponse()).thenReturn(Observable.just(this.listOfCoins))
-        this.mainViewModel.loadData(true)
+        this.mainViewModel.loadData()
 
         assert(this.mainViewModel.state.value == ViewModelStates.Loading)
         verifyZeroInteractions(this.mainActivity)
@@ -84,7 +84,7 @@ class MainViewModelTest {
     }
 
     private fun loadDataWithoutConnectionAndCachedData() {
-        this.mainViewModel.loadData(false)
+        this.mainViewModel.loadData()
 
         assert(this.mainViewModel.state.value == ViewModelStates.Loaded(this.listOfCoins))
         verifyZeroInteractions(this.mainActivity)
@@ -96,7 +96,7 @@ class MainViewModelTest {
         this.listOfCoins.clear()
         `when`(this.retrofitFactory.retrieveResponse()).thenReturn(Observable.just(this.listOfCoins))
 
-        this.mainViewModel.loadData(true)
+        this.mainViewModel.loadData()
 
         assert(this.mainViewModel.state.value == ViewModelStates.Loading)
         verifyZeroInteractions(this.mainActivity)
