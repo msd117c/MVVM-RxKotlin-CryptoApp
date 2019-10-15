@@ -1,7 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
 import android.arch.lifecycle.ViewModel
-import crypto.msd117c.com.cryptocurrency.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
 import crypto.msd117c.com.cryptocurrency.util.extensions.comfy
 import crypto.msd117c.com.cryptocurrency.util.extensions.normalize
 import crypto.msd117c.com.cryptocurrency.util.extensions.toDate

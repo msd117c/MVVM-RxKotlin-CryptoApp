@@ -11,9 +11,8 @@ import android.widget.Toast
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
 import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelFactory
-import crypto.msd117c.com.cryptocurrency.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
-import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import crypto.msd117c.com.cryptocurrency.util.Constants
 import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
@@ -24,9 +23,6 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
 
     @Inject
     lateinit var lifeCycle: MainLifeCycle
-
-    @Inject
-    lateinit var retrofitFactory: RetrofitFactory
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
@@ -78,7 +74,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
         mainActivityBinding.list.adapter = null
 
         mainActivityBinding.swipe.setOnRefreshListener {
-            viewModel.retrieveResponse()
+            viewModel.retrieveResponse(getString(R.string.api_key))
         }
     }
 
@@ -94,7 +90,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
 
     fun checkData() {
         if (mainActivityBinding.list.adapter == null) {
-            viewModel.loadData()
+            viewModel.loadData(getString(R.string.api_key))
         }
     }
 
@@ -107,7 +103,11 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
                     else -> getString(R.string.unknown_error)
                 }
             )
-            .setPositiveButton(getString(R.string.retry)) { _, _ -> viewModel.retrieveResponse() }
+            .setPositiveButton(getString(R.string.retry)) { _, _ ->
+                viewModel.retrieveResponse(
+                    getString(R.string.api_key)
+                )
+            }
             .setNegativeButton(getString(R.string.exit)) { _, _ -> finish() }
             .setCancelable(false)
             .show()

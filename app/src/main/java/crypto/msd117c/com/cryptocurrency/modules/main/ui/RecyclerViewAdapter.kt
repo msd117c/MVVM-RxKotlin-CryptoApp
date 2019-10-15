@@ -13,7 +13,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.ItemLayoutBinding
-import crypto.msd117c.com.cryptocurrency.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel
 
 

@@ -3,7 +3,6 @@ package crypto.msd117c.com.cryptocurrency.modules.main.ui
 import android.arch.lifecycle.Lifecycle
 import android.arch.lifecycle.LifecycleObserver
 import android.arch.lifecycle.OnLifecycleEvent
-import crypto.msd117c.com.cryptocurrency.repository.RetrofitFactory
 import javax.inject.Inject
 
 class MainLifeCycle @Inject constructor(

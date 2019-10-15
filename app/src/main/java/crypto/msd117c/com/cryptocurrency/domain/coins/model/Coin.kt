@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.model
+package crypto.msd117c.com.cryptocurrency.domain.coins.model
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
