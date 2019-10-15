@@ -118,4 +118,6 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
             alertDialog.dismiss()
         }
     }
+
+    fun getBinding(): MainActivityBinding = mainActivityBinding
 }
