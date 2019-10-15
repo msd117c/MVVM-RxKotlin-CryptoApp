@@ -13,12 +13,11 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.ItemLayoutBinding
-import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel
 
-
 class RecyclerViewAdapter(
-    private val mValues: List<Coin>,
+    private val mValues: List<Datum>,
     private val mListener: OnListFragmentInteractionListener?
 ) :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
@@ -28,7 +27,7 @@ class RecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Coin
+            val item = v.tag as Datum
             mListener?.onListFragmentInteraction(item)
         }
     }
@@ -135,6 +134,6 @@ class RecyclerViewAdapter(
     }
 
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Coin)
+        fun onListFragmentInteraction(item: Datum)
     }
 }

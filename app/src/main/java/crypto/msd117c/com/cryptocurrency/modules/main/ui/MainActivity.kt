@@ -11,7 +11,7 @@ import android.widget.Toast
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
 import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelFactory
-import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.util.Constants
 import crypto.msd117c.com.cryptocurrency.util.GlobalValues
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
         }
     }
 
-    override fun onListFragmentInteraction(item: Coin) {
+    override fun onListFragmentInteraction(item: Datum) {
         Toast.makeText(this, item.name, Toast.LENGTH_LONG).show()
     }
 

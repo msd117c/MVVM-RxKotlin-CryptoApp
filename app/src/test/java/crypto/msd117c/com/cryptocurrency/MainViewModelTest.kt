@@ -1,7 +1,6 @@
 package crypto.msd117c.com.cryptocurrency
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule
-import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
 import crypto.msd117c.com.cryptocurrency.modules.main.ui.MainActivity
 import crypto.msd117c.com.cryptocurrency.modules.main.ui.MainLifeCycle
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel

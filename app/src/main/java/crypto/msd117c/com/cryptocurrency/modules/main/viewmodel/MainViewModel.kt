@@ -2,7 +2,7 @@ package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
 import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import crypto.msd117c.com.cryptocurrency.domain.coins.model.Coin
+import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.UNKNOWN_ERROR
@@ -21,7 +21,7 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     private val disposable = CompositeDisposable()
     val state = MutableLiveData<ViewModelStates>()
-    private var list = ArrayList<Coin>()
+    private var list = ArrayList<Datum>()
 
     fun loadData(apiKey: String) {
         val connection = networkManager.verifyAvailableNetwork()
@@ -44,7 +44,8 @@ class MainViewModel @Inject constructor(
         request["CMC_PRO_API_KEY"] = apiKey
         disposable.add(
             coinsRepository.requestLatestCoins(request)
-                .flatMap { listOfCoins ->
+                .flatMap { coinResponse ->
+                    val listOfCoins = coinResponse.data
                     if (listOfCoins.isNotEmpty()) {
                         list.clear()
                         list.addAll(listOfCoins)

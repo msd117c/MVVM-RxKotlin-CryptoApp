@@ -1,13 +1,18 @@
 package crypto.msd117c.com.cryptocurrency.util.extensions
 
+import java.text.SimpleDateFormat
 import java.util.*
 
-val Int?.toDate: String
+val String?.toDate: String
     get() {
-        val cl = Calendar.getInstance()
         this?.let {
-            cl.timeInMillis = it.toLong()
-            return "" + cl.get(Calendar.HOUR_OF_DAY) + ":" + cl.get(Calendar.MINUTE) + ":" + cl.get(Calendar.SECOND)
+            val cal = Calendar.getInstance()
+            val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+            sdf.calendar = cal
+            cal.time = sdf.parse(it)
+            val date = cal.time
+            val timeStampFormat = SimpleDateFormat("dd-yyyy-MM HH:mm")
+            return timeStampFormat.format(date)
         }
         return "N/A"
     }
