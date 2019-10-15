@@ -49,11 +49,8 @@ class RecyclerViewAdapter(
         }
 
         holder.setViewModel(CoinViewModel(item))
-        /**
-         * Here we have to assign a listener to expand or/and collapse item view
-         */
         holder.mView.setOnClickListener {
-            val shouldExpand = holder.itemDataBinding.details.visibility == View.GONE
+            val shouldExpand = holder.itemDataBinding.details.visibility == GONE
 
             val transition = ChangeBounds()
             transition.duration = 200
@@ -61,7 +58,6 @@ class RecyclerViewAdapter(
             if (shouldExpand) {
                 expandView(holder)
             } else {
-                // If the selected item is expanded right now we have to collapse it
                 expandedPosition = -1
                 holder.itemDataBinding.details.visibility = GONE
             }
@@ -70,9 +66,6 @@ class RecyclerViewAdapter(
         }
     }
 
-    /**
-     * This function checks if there is another item expanded and if there is it collapses that item
-     */
     private fun expandView(
         holder: ViewHolder
     ) {
@@ -85,9 +78,6 @@ class RecyclerViewAdapter(
         expandedPosition = holder.adapterPosition
         holder.itemDataBinding.details.visibility = VISIBLE
 
-
-        /* This section scrolls the view in order to make the selected item the first of the list (or at least make it
-        more visible */
         val manager = (holder.parent as RecyclerView).layoutManager
         val viewHolderHeight = holder.itemDataBinding.itemRow.height
 
@@ -113,7 +103,8 @@ class RecyclerViewAdapter(
 
     override fun getItemCount(): Int = mValues.size
 
-    inner class ViewHolder(val mView: View, val parent: ViewGroup) : RecyclerView.ViewHolder(mView) {
+    inner class ViewHolder(val mView: View, val parent: ViewGroup) :
+        RecyclerView.ViewHolder(mView) {
         val itemDataBinding: ItemLayoutBinding = DataBindingUtil.bind(mView)!!
 
         fun setViewModel(coin: CoinViewModel) {
@@ -139,12 +130,11 @@ class RecyclerViewAdapter(
             itemDataBinding.percentage.setBackgroundColor(color)
             itemDataBinding.growth.setImageDrawable(drawable)
 
-            // Here we hide the expanded section (details)
-            itemDataBinding.details.visibility = View.GONE
+            itemDataBinding.details.visibility = GONE
         }
     }
 
     interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Coin?)
+        fun onListFragmentInteraction(item: Coin)
     }
 }

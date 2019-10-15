@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
     }
 
     fun configureViewModel() {
-        viewModel = ViewModelProviders.of(this, ViewModelFactory(retrofitFactory)).get(MainViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory(retrofitFactory))
+            .get(MainViewModel::class.java)
 
         // Update UI according to ViewModel's state
         viewModel.state.observe(this, Observer {
@@ -54,13 +55,13 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
                 }
                 is ViewModelStates.Loaded -> {
                     // Clear the adapter
-                    getBinding().list.adapter = null
+                    mainActivityBinding.list.adapter = null
                     // Load the adapter
-                    getBinding().list.adapter = RecyclerViewAdapter(it.list, this)
-                    getBinding().swipe.isRefreshing = false
+                    mainActivityBinding.list.adapter = RecyclerViewAdapter(it.list, this)
+                    mainActivityBinding.swipe.isRefreshing = false
                 }
                 is ViewModelStates.Error -> {
-                    getBinding().swipe.isRefreshing = false
+                    mainActivityBinding.swipe.isRefreshing = false
                     when (it.type) {
                         Constants.NO_CONNECTION_ERROR -> showAlertDialog(Constants.NO_CONNECTION_ERROR)
                         Constants.DATA_ERROR -> showAlertDialog(Constants.DATA_ERROR)
@@ -81,13 +82,8 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
         }
     }
 
-    fun getBinding(): MainActivityBinding {
-        return mainActivityBinding
-    }
-
-
-    override fun onListFragmentInteraction(item: Coin?) {
-        Toast.makeText(this, item!!.getName(), Toast.LENGTH_LONG).show()
+    override fun onListFragmentInteraction(item: Coin) {
+        Toast.makeText(this, item.name, Toast.LENGTH_LONG).show()
     }
 
     // Auxiliary Functions to make the code more clear
@@ -97,7 +93,7 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
     }
 
     fun checkData() {
-        if (getBinding().list.adapter == null) {
+        if (mainActivityBinding.list.adapter == null) {
             viewModel.loadData(NetworkManager.verifyAvailableNetwork(this))
         }
     }

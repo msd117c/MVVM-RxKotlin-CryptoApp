@@ -19,6 +19,7 @@ val String?.normalize: String
 
 val String?.comfy: String
     get() {
+        if (this == "N/A") return this
         var inputNum = this
         val spittedNub = this!!.split(GlobalValues.decimalSeparator)
         var decimalNum = ""
