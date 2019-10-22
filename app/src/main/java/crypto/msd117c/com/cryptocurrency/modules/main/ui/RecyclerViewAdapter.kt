@@ -70,23 +70,21 @@ class RecyclerViewAdapter(
 
         val relativePosition = holder.adapterPosition - firstVisiblePos
         val remain = itemCount - firstVisiblePos + 1
-        viewHolderHeight.let { height ->
-            val availableHeight = remain * height
-            if (availableHeight >= height + holder.binding.details.height + relativePosition *
-                height
-            ) {
-                (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
-                    holder.adapterPosition,
-                    0
-                )
-            } else {
-                val height = holder.parent.height
-                val distance = holder.itemView.height + holder.binding.details.height
-                (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
-                    holder.adapterPosition,
-                    height - distance
-                )
-            }
+        val availableHeight = remain * viewHolderHeight
+        if (availableHeight >= viewHolderHeight + holder.binding.details.height + relativePosition *
+            viewHolderHeight
+        ) {
+            (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
+                holder.adapterPosition,
+                0
+            )
+        } else {
+            val height = holder.parent.height
+            val distance = holder.itemView.height + holder.binding.details.height
+            (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
+                holder.adapterPosition,
+                height - distance
+            )
         }
     }
 
