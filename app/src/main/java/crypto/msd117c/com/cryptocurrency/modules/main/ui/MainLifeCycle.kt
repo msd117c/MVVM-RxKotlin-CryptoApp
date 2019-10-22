@@ -1,12 +1,12 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.ui
 
-import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
-import javax.inject.Inject
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 
-class MainLifeCycle @Inject constructor(
-    private val activity: MainActivity): LifecycleObserver {
+class MainLifeCycle(
+    private val activity: MainActivity
+) : LifecycleObserver {
     init {
         activity.lifecycle.addObserver(this)
     }

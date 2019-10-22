@@ -1,10 +1,10 @@
 package crypto.msd117c.com.cryptocurrency
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.support.test.InstrumentationRegistry
-import android.support.test.filters.SmallTest
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.filters.SmallTest
+import androidx.test.rule.ActivityTestRule
+import androidx.test.ext.junit.runners.AndroidJUnit4
 import crypto.msd117c.com.cryptocurrency.modules.main.ui.MainActivity
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull

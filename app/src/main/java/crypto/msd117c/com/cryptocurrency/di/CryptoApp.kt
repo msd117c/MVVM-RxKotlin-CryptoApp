@@ -1,26 +1,38 @@
 package crypto.msd117c.com.cryptocurrency.di
 
-import android.app.Activity
 import android.app.Application
-import android.content.Context
-import dagger.android.AndroidInjector
-import dagger.android.DispatchingAndroidInjector
-import dagger.android.HasActivityInjector
-import javax.inject.Inject
+import crypto.msd117c.com.cryptocurrency.di.core.CoreComponent
+import crypto.msd117c.com.cryptocurrency.di.core.CoreComponentImplementation
+import crypto.msd117c.com.cryptocurrency.di.network.NetworkComponent
+import crypto.msd117c.com.cryptocurrency.di.network.NetworkComponentImplementation
+import crypto.msd117c.com.cryptocurrency.di.repository.RepositoryComponent
+import crypto.msd117c.com.cryptocurrency.di.repository.RepositoryComponentImplementation
+import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelComponent
+import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelComponentImplementation
 
-class CryptoApp : Application(), HasActivityInjector, BaseApplication {
+class CryptoApp : Application() {
 
-    override fun getContext(): Context = applicationContext
+    private val coreComponent: CoreComponent by lazy {
+        CoreComponentImplementation(this)
+    }
 
-    @Inject
-    lateinit var activityInjector: DispatchingAndroidInjector<Activity>
+    lateinit var networkComponent: NetworkComponent
+    lateinit var repositoryComponent: RepositoryComponent
+    lateinit var viewModelComponent: ViewModelComponent
 
     override fun onCreate() {
         super.onCreate()
-        // initialize Dagger
-        DaggerAppComponent.builder().application(this).build().inject(this)
+        networkComponent =
+            NetworkComponentImplementation(
+                coreComponent
+            )
+        repositoryComponent =
+            RepositoryComponentImplementation(
+                networkComponent
+            )
+        viewModelComponent =
+            ViewModelComponentImplementation(
+                repositoryComponent
+            )
     }
-
-    // this is required to setup Dagger2 for Activity
-    override fun activityInjector(): AndroidInjector<Activity> = activityInjector
 }
