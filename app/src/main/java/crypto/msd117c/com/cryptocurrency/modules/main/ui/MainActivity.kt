@@ -25,13 +25,15 @@ class MainActivity : AppCompatActivity() {
     private val viewModel by lazy {
         component.mainViewModel
     }
-    private lateinit var lifeCycle: MainLifeCycle
+    private val lifeCycle by lazy {
+        component.mainLifeCycle
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
-        lifeCycle = MainLifeCycle(this)
+        lifeCycle.initLifeCycle(this)
     }
 
     fun configureViewModel() {

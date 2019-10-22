@@ -4,10 +4,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 
-class MainLifeCycle(
-    private val activity: MainActivity
-) : LifecycleObserver {
-    init {
+class MainLifeCycle : LifecycleObserver {
+
+    private lateinit var activity: MainActivity
+
+    fun initLifeCycle(activity: MainActivity) {
+        this.activity = activity
         activity.lifecycle.addObserver(this)
     }
 
