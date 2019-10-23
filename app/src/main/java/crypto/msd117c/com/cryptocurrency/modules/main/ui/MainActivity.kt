@@ -5,26 +5,31 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
 import crypto.msd117c.com.cryptocurrency.di.CryptoApp
-import crypto.msd117c.com.cryptocurrency.di.activity.ActivityComponentImplementation
+import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelComponentImplementation
 import crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter.RecyclerViewAdapter
+import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.util.Constants
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 
 class MainActivity : AppCompatActivity() {
 
     private val component by lazy {
-        ActivityComponentImplementation((application as CryptoApp).viewModelComponent)
+        ViewModelComponentImplementation((application as CryptoApp).repositoryComponent)
     }
 
     private var alertDialog: AlertDialog? = null
+    private var listAdapter: RecyclerViewAdapter? = null
+
     private lateinit var binding: MainActivityBinding
-    private val viewModel by lazy {
-        component.mainViewModel
+    private val viewModelFactory by lazy {
+        component.viewModelFactory
     }
+    private lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,36 +41,40 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun configureViewModel() {
-        viewModel.state.observe(this, Observer {
-            when (it) {
-                is ViewModelStates.Loading ->
-                    binding.swipe.isRefreshing = true
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(MainViewModel::class.java)
+        viewModel.apply {
+            state.observe(this@MainActivity, Observer {
+                when (it) {
+                    is ViewModelStates.Loading ->
+                        binding.swipe.isRefreshing = true
 
-                is ViewModelStates.Loaded ->
-                    binding.swipe.isRefreshing = false
+                    is ViewModelStates.Loaded ->
+                        binding.swipe.isRefreshing = false
 
-                is ViewModelStates.Error -> {
-                    binding.swipe.isRefreshing = false
-                    when (it.type) {
-                        Constants.NO_CONNECTION_ERROR -> showAlertDialog(Constants.NO_CONNECTION_ERROR)
-                        Constants.DATA_ERROR -> showAlertDialog(Constants.DATA_ERROR)
-                        else -> showAlertDialog(Constants.UNKNOWN_ERROR)
+                    is ViewModelStates.Error -> {
+                        binding.swipe.isRefreshing = false
+                        showAlertDialog(it.type)
                     }
                 }
-            }
-        })
-        viewModel.list.observe(this, Observer { list ->
-            binding.list.adapter =
-                RecyclerViewAdapter(list)
-        })
+            })
+            list.observe(this@MainActivity, Observer { list ->
+                listAdapter?.mValues = list
+                listAdapter?.notifyDataSetChanged()
+            })
+        }
     }
 
     fun configureView() {
-        binding.list.layoutManager =
-            LinearLayoutManager(this)
+        listAdapter = RecyclerViewAdapter(mutableListOf())
 
+        binding.list.apply {
+            layoutManager =
+                LinearLayoutManager(this@MainActivity)
+            adapter = listAdapter
+
+        }
         binding.swipe.setOnRefreshListener {
-            viewModel.loadData()
+            viewModel.loadData(true)
         }
     }
 

@@ -2,7 +2,7 @@ package crypto.msd117c.com.cryptocurrency.di.core
 
 import android.app.Application
 import crypto.msd117c.com.cryptocurrency.BuildConfig
-import crypto.msd117c.com.cryptocurrency.domain.model.NoConnectionException
+import crypto.msd117c.com.cryptocurrency.base.domain.model.NoConnectionException
 import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import crypto.msd117c.com.cryptocurrency.util.Constants
 import okhttp3.OkHttpClient

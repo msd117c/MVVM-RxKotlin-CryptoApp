@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.domain.model
+package crypto.msd117c.com.cryptocurrency.base.domain.model
 
 import java.io.IOException
 

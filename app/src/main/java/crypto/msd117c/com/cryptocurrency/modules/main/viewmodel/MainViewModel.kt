@@ -1,9 +1,10 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import crypto.msd117c.com.cryptocurrency.domain.model.NoConnectionException
+import crypto.msd117c.com.cryptocurrency.base.domain.model.NoConnectionException
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
 import crypto.msd117c.com.cryptocurrency.util.Constants.Companion.DATA_ERROR
@@ -18,7 +19,18 @@ class MainViewModel(
     val state = MutableLiveData<ViewModelStates>()
     val list = MutableLiveData<List<Datum>>()
 
-    fun loadData() {
+    init {
+        Log.d("VIEWMODEL", "initialized")
+    }
+
+    fun loadData(refresh: Boolean = false) {
+        if (!refresh) {
+            list.value?.let { itemsList ->
+                list.postValue(itemsList)
+                state.postValue(ViewModelStates.Loaded)
+                return
+            }
+        }
         state.value = ViewModelStates.Loading
         viewModelScope.launch {
             try {

@@ -15,7 +15,7 @@ import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter.CoinViewModel
 
 class RecyclerViewAdapter(
-    private val mValues: List<Datum>
+    var mValues: List<Datum>
 ) :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
