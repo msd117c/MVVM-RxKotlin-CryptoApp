@@ -7,11 +7,12 @@ import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory(
-    private val coinsRepository: CoinsRepository
+    private val coinsRepository: CoinsRepository,
+    private val coroutineContextProvider: CoroutineContextProvider
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(coinsRepository) as T
+        return MainViewModel(coinsRepository, coroutineContextProvider) as T
     }
 
 }
