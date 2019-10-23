@@ -1,6 +1,5 @@
 package crypto.msd117c.com.cryptocurrency.util.extensions
 
-import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
@@ -21,16 +20,16 @@ val String?.normalize: String
 
 val String?.comfy: String
     get() {
-        if (this == "N/A") return this
+        if (this == "N/A" || this == null) return "N/A"
         var inputNum = this
-        val spittedNub = this!!.split(GlobalValues.decimalSeparator)
+        val spittedNub = this.split(".")
         var decimalNum = ""
         if (spittedNub.size == 2) {
             inputNum = spittedNub[0]
-            decimalNum = GlobalValues.decimalSeparator + spittedNub[1]
+            decimalNum = "." + spittedNub[1]
         }
 
-        val inputDouble = inputNum!!.toDouble()
+        val inputDouble = inputNum.toDouble()
         val myFormatter = DecimalFormat("###,###")
         val output = myFormatter.format(inputDouble)
 

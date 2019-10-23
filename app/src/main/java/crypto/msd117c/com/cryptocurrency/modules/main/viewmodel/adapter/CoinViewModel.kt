@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
+package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter
 
 import androidx.lifecycle.ViewModel
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum

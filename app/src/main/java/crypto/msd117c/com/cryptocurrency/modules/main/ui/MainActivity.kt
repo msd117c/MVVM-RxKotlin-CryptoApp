@@ -10,8 +10,8 @@ import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
 import crypto.msd117c.com.cryptocurrency.di.CryptoApp
 import crypto.msd117c.com.cryptocurrency.di.activity.ActivityComponentImplementation
+import crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter.RecyclerViewAdapter
 import crypto.msd117c.com.cryptocurrency.util.Constants
-import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 
 class MainActivity : AppCompatActivity() {
@@ -20,34 +20,30 @@ class MainActivity : AppCompatActivity() {
         ActivityComponentImplementation((application as CryptoApp).viewModelComponent)
     }
 
-    private lateinit var alertDialog: AlertDialog
+    private var alertDialog: AlertDialog? = null
     private lateinit var binding: MainActivityBinding
     private val viewModel by lazy {
         component.mainViewModel
-    }
-    private val lifeCycle by lazy {
-        component.mainLifeCycle
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding =
             DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
-        lifeCycle.initLifeCycle(this)
+        configureViewModel()
+        configureView()
+        initActivity()
     }
 
     fun configureViewModel() {
-        // Update UI according to ViewModel's state
         viewModel.state.observe(this, Observer {
             when (it) {
-                is ViewModelStates.Loading -> {
-                    // Clear the adapter
-                    binding.list.adapter = null
+                is ViewModelStates.Loading ->
                     binding.swipe.isRefreshing = true
-                }
-                is ViewModelStates.Loaded -> {
+
+                is ViewModelStates.Loaded ->
                     binding.swipe.isRefreshing = false
-                }
+
                 is ViewModelStates.Error -> {
                     binding.swipe.isRefreshing = false
                     when (it.type) {
@@ -59,31 +55,22 @@ class MainActivity : AppCompatActivity() {
             }
         })
         viewModel.list.observe(this, Observer { list ->
-            binding.list.adapter = RecyclerViewAdapter(list)
+            binding.list.adapter =
+                RecyclerViewAdapter(list)
         })
     }
 
     fun configureView() {
         binding.list.layoutManager =
             LinearLayoutManager(this)
-        // Clear the adapter when create all
-        binding.list.adapter = null
 
         binding.swipe.setOnRefreshListener {
             viewModel.loadData()
         }
     }
 
-    // Auxiliary Functions to make the code more clear
-    fun setGlobalValues() {
-        GlobalValues.decimalSeparator = getString(R.string.decimal_separator)
-        GlobalValues.thousandSeparator = getString(R.string.thounsand_separator)
-    }
-
-    fun checkData() {
-        if (binding.list.adapter == null) {
-            viewModel.loadData()
-        }
+    fun initActivity() {
+        viewModel.loadData()
     }
 
     private fun showAlertDialog(errorType: Int) {
@@ -103,11 +90,13 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
-    fun dismissDialog() {
-        if (::alertDialog.isInitialized && alertDialog.isShowing) {
-            alertDialog.dismiss()
+    override fun onDestroy() {
+        super.onDestroy()
+        alertDialog?.let { dialog ->
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
         }
     }
 
-    fun getBinding(): MainActivityBinding = binding
 }

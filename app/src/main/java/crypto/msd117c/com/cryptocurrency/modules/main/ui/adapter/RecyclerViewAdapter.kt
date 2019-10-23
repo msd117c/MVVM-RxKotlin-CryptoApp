@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.modules.main.ui
+package crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter
 
 import android.graphics.Color
 import android.transition.ChangeBounds
@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.ItemLayoutBinding
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
-import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel
+import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter.CoinViewModel
 
 class RecyclerViewAdapter(
     private val mValues: List<Datum>
@@ -32,7 +32,11 @@ class RecyclerViewAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[holder.adapterPosition]
 
-        holder.setViewModel(CoinViewModel(item))
+        holder.setViewModel(
+            CoinViewModel(
+                item
+            )
+        )
         holder.itemView.setOnClickListener {
             val shouldExpand = holder.binding.details.visibility == GONE
 

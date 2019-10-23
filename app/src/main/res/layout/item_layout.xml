@@ -6,7 +6,7 @@
 
         <variable
             name="coin"
-            type="crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel" />
+            type="crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter.CoinViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
