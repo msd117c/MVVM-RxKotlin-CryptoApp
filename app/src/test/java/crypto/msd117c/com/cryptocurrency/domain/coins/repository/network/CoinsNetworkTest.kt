@@ -1,9 +1,7 @@
-package crypto.msd117c.com.cryptocurrency.domain.coins.network
+package crypto.msd117c.com.cryptocurrency.domain.coins.repository.network
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.CoinResponse
-import crypto.msd117c.com.cryptocurrency.domain.coins.repository.network.CoinsNetwork
-import crypto.msd117c.com.cryptocurrency.domain.coins.repository.network.CoinsService
 import crypto.msd117c.com.cryptocurrency.utils.BaseTest
 import crypto.msd117c.com.cryptocurrency.utils.coroutines.TestCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi

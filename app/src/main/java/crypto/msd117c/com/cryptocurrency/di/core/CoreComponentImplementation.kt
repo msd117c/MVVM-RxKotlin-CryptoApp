@@ -14,19 +14,26 @@ import java.util.concurrent.TimeUnit
 class CoreComponentImplementation(override val app: Application) :
     CoreComponent {
 
-    override val networkManager by lazy {
-        NetworkManager(app)
-    }
+    override var networkManager = NetworkManager(app)
 
     override val retrofit: Retrofit by lazy {
-        Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
-            .client(provideHttpClient(networkManager))
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+        if (Constants.inTest) {
+            Retrofit.Builder()
+                .baseUrl(Constants.TEST_URL)
+                .client(provideHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        } else {
+            Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .client(provideHttpClient())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        }
+
     }
 
-    private fun provideHttpClient(networkManager: NetworkManager): OkHttpClient {
+    private fun provideHttpClient(): OkHttpClient {
         val client = OkHttpClient.Builder()
         if (BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
@@ -42,7 +49,7 @@ class CoreComponentImplementation(override val app: Application) :
                 Constants.API_KEY
             ).build()
             request = request.newBuilder().url(url).build()
-
+            chain.proceed(request)
             if (networkManager.verifyAvailableNetwork()) {
                 chain.proceed(request)
             } else {

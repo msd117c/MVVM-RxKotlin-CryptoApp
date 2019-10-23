@@ -6,6 +6,6 @@ import retrofit2.Retrofit
 
 interface CoreComponent {
     val app: Application
-    val networkManager: NetworkManager
     val retrofit: Retrofit
+    var networkManager: NetworkManager
 }

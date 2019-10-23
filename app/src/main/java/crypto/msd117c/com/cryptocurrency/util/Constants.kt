@@ -1,7 +1,11 @@
 package crypto.msd117c.com.cryptocurrency.util
 
+import okhttp3.HttpUrl
+
 class Constants {
     companion object {
+        var inTest = false
+        var TEST_URL: HttpUrl? = null
         const val BASE_URL = "https://sandbox-api.coinmarketcap.com/v1/"
         const val END_POINT = "cryptocurrency/listings/latest"
         const val API_QUERY_ID = "CMC_PRO_API_KEY"

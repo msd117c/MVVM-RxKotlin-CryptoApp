@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModelFactory by lazy {
         component.viewModelFactory
     }
-    private lateinit var viewModel: MainViewModel
+    lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

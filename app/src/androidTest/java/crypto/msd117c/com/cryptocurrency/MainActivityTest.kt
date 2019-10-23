@@ -1,41 +1,125 @@
 package crypto.msd117c.com.cryptocurrency
 
-import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.filters.SmallTest
-import androidx.test.rule.ActivityTestRule
+import android.content.Context
+import android.content.Intent
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
+import crypto.msd117c.com.cryptocurrency.di.CryptoApp
+import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import crypto.msd117c.com.cryptocurrency.modules.main.ui.MainActivity
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import crypto.msd117c.com.cryptocurrency.util.Constants
+import crypto.msd117c.com.cryptocurrency.utils.MockWebServerDispatcher
+import crypto.msd117c.com.cryptocurrency.utils.RecyclerViewMatcher
+import crypto.msd117c.com.cryptocurrency.utils.WaitingForViewModelStateResource
+import io.mockk.every
+import io.mockk.mockk
+import okhttp3.mockwebserver.MockWebServer
+import org.junit.After
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
-    private lateinit var mainActivity: MainActivity
-
     @get:Rule
-    var rule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    var activityRule = ActivityTestRule(MainActivity::class.java, true, false)
 
-    @get:Rule
-    val mockitoRule = InstantTaskExecutorRule()
+    private val networkManager = mockk<NetworkManager>(relaxed = true)
+
+    private lateinit var context: Context
+
+    private lateinit var resourcesContext: Context
+
+    private lateinit var idlingResource: IdlingResource
+
+    private val mockWebServer = MockWebServer()
+
+    @Before
+    fun init() {
+        mockWebServer.start(8080)
+
+        Constants.inTest = true
+        Constants.TEST_URL = mockWebServer.url("")
+        context = InstrumentationRegistry.getInstrumentation().context
+        resourcesContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+        CryptoApp.coreComponent.networkManager = networkManager
+
+        mockWebServer.setDispatcher(MockWebServerDispatcher.RequestDispatcher(context))
+
+        every { networkManager.verifyAvailableNetwork() } returns true
+    }
 
     @Test
-    @SmallTest
-    fun useAppContext() {
-        mainActivity = rule.activity
-        assertNotNull(mainActivity.getBinding())
+    fun test01LoadData() {
+        activityRule.launchActivity(Intent())
 
-        // Context of the app under test.
-        val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("crypto.msd117c.com.cryptocurrency", appContext.packageName)
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(RecyclerViewMatcher(R.id.list).atPosition(0)).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test02NoConnection() {
+        every { networkManager.verifyAvailableNetwork() } returns false
+
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(withText(resourcesContext.getString(R.string.no_connection))).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test03DataError() {
+        mockWebServer.setDispatcher(MockWebServerDispatcher.RequestInvalidDispatcher(context))
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(withText(resourcesContext.getString(R.string.data_error))).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test04MalformedJsonError() {
+        mockWebServer.setDispatcher(MockWebServerDispatcher.RequestMalformedDispatcher(context))
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(withText(resourcesContext.getString(R.string.data_error))).check(matches(isDisplayed()))
+    }
+
+    @After
+    fun release() {
+        activityRule.finishActivity()
+        if (::idlingResource.isInitialized) {
+            IdlingRegistry.getInstance().unregister(idlingResource)
+        }
+        mockWebServer.shutdown()
     }
 }

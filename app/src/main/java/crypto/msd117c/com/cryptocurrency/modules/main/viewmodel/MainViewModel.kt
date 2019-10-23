@@ -35,15 +35,21 @@ class MainViewModel(
                 val coins = withContext(coroutineContextProvider.IO) {
                     coinsRepository.requestLatestCoins()
                 }
-                list.postValue(coins.data)
-                if (coins.data.isEmpty()) {
-                    state.postValue(ViewModelStates.Error(DATA_ERROR))
-                } else {
-                    state.postValue(ViewModelStates.Loaded)
+                coins.data?.let { data ->
+                    list.postValue(data)
+                    if (data.isEmpty()) {
+                        state.postValue(ViewModelStates.Error(DATA_ERROR))
+                    } else {
+                        state.postValue(ViewModelStates.Loaded)
+                    }
+                    return@launch
                 }
+                state.postValue(ViewModelStates.Error(DATA_ERROR))
             } catch (e: NoConnectionException) {
+                list.postValue(mutableListOf())
                 state.postValue(ViewModelStates.Error(NO_CONNECTION_ERROR))
             } catch (e: Exception) {
+                list.postValue(mutableListOf())
                 state.postValue(ViewModelStates.Error(DATA_ERROR))
             }
         }

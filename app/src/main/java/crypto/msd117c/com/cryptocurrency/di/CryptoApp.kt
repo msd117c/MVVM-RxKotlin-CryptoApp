@@ -8,14 +8,16 @@ import crypto.msd117c.com.cryptocurrency.di.repository.RepositoryComponentImplem
 
 class CryptoApp : Application() {
 
-    private val coreComponent: CoreComponent by lazy {
-        CoreComponentImplementation(this)
+    companion object {
+        lateinit var coreComponent: CoreComponent
     }
 
     lateinit var repositoryComponent: RepositoryComponent
 
     override fun onCreate() {
         super.onCreate()
+        coreComponent = CoreComponentImplementation(this)
+
         repositoryComponent =
             RepositoryComponentImplementation(
                 coreComponent
