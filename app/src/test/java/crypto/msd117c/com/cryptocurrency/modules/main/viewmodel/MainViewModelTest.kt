@@ -1,7 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
-import android.arch.lifecycle.Observer
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
 import crypto.msd117c.com.cryptocurrency.domain.NoConnectionException
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.CoinResponse
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum

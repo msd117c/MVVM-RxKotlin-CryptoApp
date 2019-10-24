@@ -1,8 +1,8 @@
 package crypto.msd117c.com.cryptocurrency.utils
 
-import android.arch.lifecycle.MutableLiveData
-import android.support.test.espresso.IdlingResource
-import android.support.v7.app.AppCompatActivity
+import androidx.lifecycle.MutableLiveData
+import androidx.test.espresso.IdlingResource
+import androidx.appcompat.app.AppCompatActivity
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 
 class WaitingForViewModelStateResource(state: MutableLiveData<*>, activity: AppCompatActivity) :

@@ -1,7 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.utils.json
 
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import java.io.File
 
 @VisibleForTesting

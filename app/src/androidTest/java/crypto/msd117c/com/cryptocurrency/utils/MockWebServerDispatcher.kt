@@ -1,7 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.utils
 
 import android.content.Context
-import android.support.annotation.VisibleForTesting
+import androidx.annotation.VisibleForTesting
 import crypto.msd117c.com.cryptocurrency.utils.json.JsonGetter
 import okhttp3.mockwebserver.Dispatcher
 import okhttp3.mockwebserver.MockResponse
@@ -19,10 +19,10 @@ class MockWebServerDispatcher {
             mockedResponse.setResponseCode(200)
             if (request != null) {
                 val path = if (request.path.contains("?")) {
-                    if (request.path.contains("prefix")) {
-                        request.path.split("?")[0].replace("?", "").replace("countries", "prefix")
+                    if (request.path.split("?").isNotEmpty()) {
+                        request.path.split("?")[0]
                     } else {
-                        request.path.split("?")[0].replace("?", "")
+                        request.path
                     }
                 } else {
                     request.path
@@ -62,10 +62,10 @@ class MockWebServerDispatcher {
 
             if (request != null) {
                 val path = if (request.path.contains("?")) {
-                    if (request.path.contains("prefix")) {
-                        request.path.split("?")[0].replace("?", "").replace("countries", "prefix")
+                    if (request.path.split("?").isNotEmpty()) {
+                        request.path.split("?")[0]
                     } else {
-                        request.path.split("?")[0].replace("?", "")
+                        request.path
                     }
                 } else {
                     request.path
@@ -96,10 +96,10 @@ class MockWebServerDispatcher {
             mockedResponse.setResponseCode(200)
             if (request != null) {
                 val path = if (request.path.contains("?")) {
-                    if (request.path.contains("prefix")) {
-                        request.path.split("?")[0].replace("?", "").replace("countries", "prefix")
+                    if (request.path.split("?").isNotEmpty()) {
+                        request.path.split("?")[0]
                     } else {
-                        request.path.split("?")[0].replace("?", "")
+                        request.path
                     }
                 } else {
                     request.path
@@ -130,10 +130,10 @@ class MockWebServerDispatcher {
             mockedResponse.setResponseCode(422)
             if (request != null) {
                 val path = if (request.path.contains("?")) {
-                    if (request.path.contains("prefix")) {
-                        request.path.split("?")[0].replace("?", "").replace("countries", "prefix")
+                    if (request.path.split("?").isNotEmpty()) {
+                        request.path.split("?")[0]
                     } else {
-                        request.path.split("?")[0].replace("?", "")
+                        request.path
                     }
                 } else {
                     request.path
@@ -164,10 +164,10 @@ class MockWebServerDispatcher {
             mockedResponse.setResponseCode(200)
             if (request != null) {
                 val path = if (request.path.contains("?")) {
-                    if (request.path.contains("prefix")) {
-                        request.path.split("?")[0].replace("?", "").replace("countries", "prefix")
+                    if (request.path.split("?").isNotEmpty()) {
+                        request.path.split("?")[0]
                     } else {
-                        request.path.split("?")[0].replace("?", "")
+                        request.path
                     }
                 } else {
                     request.path

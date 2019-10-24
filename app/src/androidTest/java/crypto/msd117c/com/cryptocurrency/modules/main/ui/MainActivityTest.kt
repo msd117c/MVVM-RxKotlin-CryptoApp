@@ -2,32 +2,31 @@ package crypto.msd117c.com.cryptocurrency.modules.main.ui
 
 import android.content.Context
 import android.content.Intent
-import android.support.test.InstrumentationRegistry
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.IdlingRegistry
-import android.support.test.espresso.IdlingResource
-import android.support.test.espresso.assertion.ViewAssertions.matches
-import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
-import android.support.test.rule.ActivityTestRule
-import android.support.test.runner.AndroidJUnit4
+import androidx.recyclerview.widget.RecyclerView
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.IdlingResource
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withText
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.rule.ActivityTestRule
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import crypto.msd117c.com.cryptocurrency.modules.main.TestMainInjector
 import crypto.msd117c.com.cryptocurrency.modules.main.TestMainModule
+import crypto.msd117c.com.cryptocurrency.utils.MockWebServerDispatcher
 import crypto.msd117c.com.cryptocurrency.utils.RecyclerViewMatcher
 import crypto.msd117c.com.cryptocurrency.utils.WaitingForViewModelStateResource
+import io.mockk.every
 import io.mockk.mockk
 import okhttp3.mockwebserver.MockWebServer
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.*
 import org.junit.runner.RunWith
+import org.junit.runners.MethodSorters
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 @RunWith(AndroidJUnit4::class)
 class MainActivityTest {
 
@@ -35,6 +34,7 @@ class MainActivityTest {
     var activityRule = ActivityTestRule(MainActivity::class.java, true, false)
 
     private lateinit var context: Context
+    private lateinit var resourcesContext: Context
 
     private val networkManager = mockk<NetworkManager>(relaxed = true)
 
@@ -45,6 +45,8 @@ class MainActivityTest {
     @Before
     fun init() {
         context = InstrumentationRegistry.getInstrumentation().context
+        resourcesContext = InstrumentationRegistry.getInstrumentation().targetContext
+        mockWebServer.start(8080)
         TestMainInjector(
             TestMainModule(
                 networkManager
@@ -53,10 +55,30 @@ class MainActivityTest {
         )
             .inject()
 
-        mockWebServer.start(8080)
+        every { networkManager.verifyAvailableNetwork() } returns true
     }
 
+    @Test
     fun test01LoadData() {
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.list,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        val recyclerView = activityRule.activity.findViewById<RecyclerView>(R.id.list)
+
+        onView(RecyclerViewMatcher(recyclerView).atPosition(0)).check(
+            matches(isDisplayed())
+        )
+    }
+
+    @Test
+    fun test02NoConnection() {
+        every { networkManager.verifyAvailableNetwork() } returns false
+
         activityRule.launchActivity(Intent())
 
         idlingResource = WaitingForViewModelStateResource(
@@ -65,6 +87,47 @@ class MainActivityTest {
         )
         IdlingRegistry.getInstance().register(idlingResource)
 
-        onView(RecyclerViewMatcher(R.id.list).atPosition(0)).check(matches(isDisplayed()))
+        onView(withText(resourcesContext.getString(R.string.no_connection))).check(
+            matches(
+                isDisplayed()
+            )
+        )
+    }
+
+    @Test
+    fun test03DataError() {
+        mockWebServer.setDispatcher(MockWebServerDispatcher.RequestInvalidDispatcher(context))
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(withText(resourcesContext.getString(R.string.data_error))).check(matches(isDisplayed()))
+    }
+
+    @Test
+    fun test04MalformedJsonError() {
+        mockWebServer.setDispatcher(MockWebServerDispatcher.RequestMalformedDispatcher(context))
+        activityRule.launchActivity(Intent())
+
+        idlingResource = WaitingForViewModelStateResource(
+            activityRule.activity.viewModel.state,
+            activityRule.activity
+        )
+        IdlingRegistry.getInstance().register(idlingResource)
+
+        onView(withText(resourcesContext.getString(R.string.data_error))).check(matches(isDisplayed()))
+    }
+
+    @After
+    fun release() {
+        activityRule.finishActivity()
+        if (::idlingResource.isInitialized) {
+            IdlingRegistry.getInstance().unregister(idlingResource)
+        }
+        mockWebServer.shutdown()
     }
 }

@@ -2,10 +2,7 @@ package crypto.msd117c.com.cryptocurrency.modules.main
 
 import android.app.Application
 import crypto.msd117c.com.cryptocurrency.TestNetworkModule
-import crypto.msd117c.com.cryptocurrency.di.ActivityModule
-import crypto.msd117c.com.cryptocurrency.di.AppComponent
-import crypto.msd117c.com.cryptocurrency.di.AppModule
-import crypto.msd117c.com.cryptocurrency.di.RepositoryModule
+import crypto.msd117c.com.cryptocurrency.di.*
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -30,4 +27,6 @@ interface MainTestApplicationComponent : AppComponent {
 
         fun build(): MainTestApplicationComponent
     }
+
+    fun inject(cryptoApp: CryptoAppTest)
 }

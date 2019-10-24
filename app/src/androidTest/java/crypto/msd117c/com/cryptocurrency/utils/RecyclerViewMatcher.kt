@@ -1,13 +1,13 @@
 package crypto.msd117c.com.cryptocurrency.utils
 
 import android.content.res.Resources
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import org.hamcrest.Description
 import org.hamcrest.Matcher
 import org.hamcrest.TypeSafeMatcher
 
-class RecyclerViewMatcher(private val recyclerViewId: Int) {
+class RecyclerViewMatcher(private val recyclerView: RecyclerView) {
 
     fun atPosition(position: Int): Matcher<View> {
         return atPositionOnView(position, -1)
@@ -18,14 +18,14 @@ class RecyclerViewMatcher(private val recyclerViewId: Int) {
             var resources: Resources? = null
             var childView: View? = null
             override fun describeTo(description: Description) {
-                var idDescription = recyclerViewId.toString()
+                var idDescription = recyclerView.id.toString()
                 if (this.resources != null) {
                     idDescription = try {
-                        this.resources!!.getResourceName(recyclerViewId)
+                        this.resources!!.getResourceName(recyclerView.id)
                     } catch (var4: Resources.NotFoundException) {
                         String.format(
                             "%s (resource name not found)",
-                            Integer.valueOf(recyclerViewId)
+                            Integer.valueOf(recyclerView.id)
                         )
                     }
 
@@ -36,13 +36,8 @@ class RecyclerViewMatcher(private val recyclerViewId: Int) {
             override fun matchesSafely(view: View): Boolean {
                 this.resources = view.resources
                 if (childView == null) {
-                    val recyclerView = view.rootView.findViewById(recyclerViewId) as RecyclerView
-                    if (recyclerView.id == recyclerViewId) {
-                        childView =
-                            recyclerView.findViewHolderForAdapterPosition(position)!!.itemView
-                    } else {
-                        return false
-                    }
+                    childView =
+                        recyclerView.findViewHolderForAdapterPosition(position)!!.itemView
                 }
                 return if (targetViewId == -1) {
                     view === childView

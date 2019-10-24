@@ -1,6 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter
 
-import android.arch.lifecycle.ViewModel
+import androidx.lifecycle.ViewModel
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.util.extensions.comfy
 import crypto.msd117c.com.cryptocurrency.util.extensions.normalize

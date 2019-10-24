@@ -1,6 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.domain.coins.repository.network
 
-import android.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.CoinResponse
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
 import crypto.msd117c.com.cryptocurrency.utils.BaseTest

@@ -1,9 +1,9 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter
 
-import android.databinding.DataBindingUtil
+import androidx.databinding.DataBindingUtil
 import android.graphics.Color
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -18,7 +18,7 @@ import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter.CoinView
 class RecyclerViewAdapter(
     var mValues: List<Datum>
 ) :
-    RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
+    androidx.recyclerview.widget.RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
     private var expandedPosition = -1
 
@@ -59,7 +59,7 @@ class RecyclerViewAdapter(
         holder: ViewHolder
     ) {
         if (expandedPosition != -1 && expandedPosition != holder.adapterPosition) {
-            if ((holder.parent as RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
+            if ((holder.parent as androidx.recyclerview.widget.RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
                 ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder)
                     .binding.details.visibility = GONE
             }
@@ -67,11 +67,11 @@ class RecyclerViewAdapter(
         expandedPosition = holder.adapterPosition
         holder.binding.details.visibility = VISIBLE
 
-        val manager = (holder.parent as RecyclerView).layoutManager
+        val manager = (holder.parent as androidx.recyclerview.widget.RecyclerView).layoutManager
         val viewHolderHeight = holder.binding.itemRow.height
 
         val firstVisiblePos =
-            (holder.parent.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
+            (holder.parent.layoutManager as androidx.recyclerview.widget.LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
 
         val relativePosition = holder.adapterPosition - firstVisiblePos
         val remain = itemCount - firstVisiblePos + 1
@@ -79,11 +79,11 @@ class RecyclerViewAdapter(
         if (availableHeight >= viewHolderHeight + holder.binding.details.height + relativePosition *
             viewHolderHeight
         ) {
-            (manager as LinearLayoutManager).scrollToPositionWithOffset(holder.adapterPosition, 0)
+            (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(holder.adapterPosition, 0)
         } else {
             val height = holder.parent.height
             val distance = holder.itemView.height + holder.binding.details.height
-            (manager as LinearLayoutManager).scrollToPositionWithOffset(
+            (manager as androidx.recyclerview.widget.LinearLayoutManager).scrollToPositionWithOffset(
                 holder.adapterPosition,
                 height - distance
             )
@@ -93,7 +93,7 @@ class RecyclerViewAdapter(
     override fun getItemCount(): Int = mValues.size
 
     inner class ViewHolder(val binding: ItemLayoutBinding, val parent: ViewGroup) :
-        RecyclerView.ViewHolder(binding.root) {
+        androidx.recyclerview.widget.RecyclerView.ViewHolder(binding.root) {
 
         fun setViewModel(coin: CoinViewModel) {
             binding.coin = coin

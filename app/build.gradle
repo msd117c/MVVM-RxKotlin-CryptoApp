@@ -14,7 +14,10 @@ android {
         targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "crypto.msd117c.com.cryptocurrency.utils.CustomTestRunner"
+    }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     buildTypes {
         release {
@@ -24,6 +27,7 @@ android {
     }
     dataBinding {
         enabled = true
+
     }
     testOptions {
         unitTests.returnDefaultValues = true
@@ -33,31 +37,11 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.android.support:appcompat-v7:28.0.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'android.arch.lifecycle:extensions:1.1.1'
-    implementation 'com.android.support:support-v4:28.0.0'
-    implementation 'com.android.support:recyclerview-v7:28.0.0'
-    testImplementation 'junit:junit:4.12'
-
-    // Mockito
-    testImplementation "org.mockito:mockito-core:$mockito_version"
-    testImplementation 'org.mockito:mockito-inline:2.8.47'
-    androidTestImplementation "org.mockito:mockito-android:$mockito_version"
-
-    // Arch Life Cycle testing
-    testImplementation 'android.arch.core:core-testing:1.1.1'
-
-    androidTestImplementation 'android.arch.core:core-testing:1.1.1'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test:rules:1.0.2'
-    // Espresso support
-    androidTestImplementation('com.android.support.test.espresso:espresso-core:3.0.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-
-    // add this for intent mocking support
-    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0'
 
     // dagger
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
@@ -75,7 +59,7 @@ dependencies {
 
     // JSON to Java & retrofit
     implementation 'com.google.code.gson:gson:2.8.5'
-    implementation "com.squareup.retrofit2:retrofit:2.5.0"
+    implementation "com.squareup.retrofit2:retrofit:2.6.0"
     implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
     implementation "com.squareup.retrofit2:converter-gson:2.4.0"
 
@@ -83,11 +67,26 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:$verOkHttp3"
     implementation "com.squareup.okhttp3:logging-interceptor:$verOkHttp3Log"
 
-    implementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
-    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
-    testImplementation("com.squareup.okhttp3:mockwebserver:3.12.0")
+    // TEST
+    testImplementation "junit:junit:4.12"
+    // Arch Life Cycle testing
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'androidx.test:core:1.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestUtil 'androidx.test:orchestrator:1.2.0'
+    implementation "androidx.test.espresso:espresso-idling-resource:3.2.0"
+    androidTestImplementation ("com.android.support.test.espresso:espresso-core:3.2.2", {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
 
     testImplementation "io.mockk:mockk:1.9.3"
     androidTestImplementation("io.mockk:mockk-android:1.9.3"){ exclude module: 'objenesis' }
     androidTestImplementation 'org.objenesis:objenesis:2.6'
+
+    implementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
+    androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
+    testImplementation("com.squareup.okhttp3:mockwebserver:3.12.0")
 }

@@ -1,6 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.modules.main
 
-import android.support.test.InstrumentationRegistry
+import androidx.test.platform.app.InstrumentationRegistry
 import crypto.msd117c.com.cryptocurrency.TestNetworkModule
 import crypto.msd117c.com.cryptocurrency.di.AppModule
 import crypto.msd117c.com.cryptocurrency.di.CryptoAppTest
