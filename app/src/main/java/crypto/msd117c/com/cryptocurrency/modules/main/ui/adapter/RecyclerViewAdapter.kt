@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.modules.main.ui
+package crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter
 
 import android.databinding.DataBindingUtil
 import android.graphics.Color
@@ -7,49 +7,39 @@ import android.support.v7.widget.RecyclerView
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
 import android.view.LayoutInflater
-import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.ItemLayoutBinding
 import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
-import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.CoinViewModel
+import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.adapter.CoinViewModel
 
 class RecyclerViewAdapter(
-    private val mValues: List<Datum>,
-    private val mListener: OnListFragmentInteractionListener?
+    var mValues: List<Datum>
 ) :
     RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder>() {
 
-    private val mOnClickListener: View.OnClickListener
     private var expandedPosition = -1
 
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Datum
-            mListener?.onListFragmentInteraction(item)
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_layout, parent, false)
-        return ViewHolder(view, parent)
+        val binding = DataBindingUtil.inflate<ItemLayoutBinding>(
+            LayoutInflater.from(parent.context)
+            , R.layout.item_layout, parent, false
+        )
+        return ViewHolder(binding, parent)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[holder.adapterPosition]
 
-        // We are not going to use the OnListFragmentInteractionListener but it could be useful for future uses
-        with(holder.mView) {
-            tag = item
-            setOnClickListener(mOnClickListener)
-        }
-
-        holder.setViewModel(CoinViewModel(item))
-        holder.mView.setOnClickListener {
-            val shouldExpand = holder.itemDataBinding.details.visibility == GONE
+        holder.setViewModel(
+            CoinViewModel(
+                item
+            )
+        )
+        holder.itemView.setOnClickListener {
+            val shouldExpand = holder.binding.details.visibility == GONE
 
             val transition = ChangeBounds()
             transition.duration = 200
@@ -58,7 +48,7 @@ class RecyclerViewAdapter(
                 expandView(holder)
             } else {
                 expandedPosition = -1
-                holder.itemDataBinding.details.visibility = GONE
+                holder.binding.details.visibility = GONE
             }
 
             TransitionManager.beginDelayedTransition(holder.parent, transition)
@@ -71,14 +61,14 @@ class RecyclerViewAdapter(
         if (expandedPosition != -1 && expandedPosition != holder.adapterPosition) {
             if ((holder.parent as RecyclerView).findViewHolderForAdapterPosition(expandedPosition) != null) {
                 ((holder.parent).findViewHolderForAdapterPosition(expandedPosition) as ViewHolder)
-                    .itemDataBinding.details.visibility = GONE
+                    .binding.details.visibility = GONE
             }
         }
         expandedPosition = holder.adapterPosition
-        holder.itemDataBinding.details.visibility = VISIBLE
+        holder.binding.details.visibility = VISIBLE
 
         val manager = (holder.parent as RecyclerView).layoutManager
-        val viewHolderHeight = holder.itemDataBinding.itemRow.height
+        val viewHolderHeight = holder.binding.itemRow.height
 
         val firstVisiblePos =
             (holder.parent.layoutManager as LinearLayoutManager).findFirstCompletelyVisibleItemPosition()
@@ -86,13 +76,13 @@ class RecyclerViewAdapter(
         val relativePosition = holder.adapterPosition - firstVisiblePos
         val remain = itemCount - firstVisiblePos + 1
         val availableHeight = remain * viewHolderHeight
-        if (availableHeight >= viewHolderHeight + holder.itemDataBinding.details.height + relativePosition *
+        if (availableHeight >= viewHolderHeight + holder.binding.details.height + relativePosition *
             viewHolderHeight
         ) {
             (manager as LinearLayoutManager).scrollToPositionWithOffset(holder.adapterPosition, 0)
         } else {
             val height = holder.parent.height
-            val distance = holder.mView.height + holder.itemDataBinding.details.height
+            val distance = holder.itemView.height + holder.binding.details.height
             (manager as LinearLayoutManager).scrollToPositionWithOffset(
                 holder.adapterPosition,
                 height - distance
@@ -102,17 +92,16 @@ class RecyclerViewAdapter(
 
     override fun getItemCount(): Int = mValues.size
 
-    inner class ViewHolder(val mView: View, val parent: ViewGroup) :
-        RecyclerView.ViewHolder(mView) {
-        val itemDataBinding: ItemLayoutBinding = DataBindingUtil.bind(mView)!!
+    inner class ViewHolder(val binding: ItemLayoutBinding, val parent: ViewGroup) :
+        RecyclerView.ViewHolder(binding.root) {
 
         fun setViewModel(coin: CoinViewModel) {
-            itemDataBinding.coin = coin
+            binding.coin = coin
 
             // Depending on the coin's growth we assign a color and a drawable object for the view
             val drawable = when (coin.isPositiveBalance()) {
-                1 -> mView.context.getDrawable(R.drawable.ic_action_trending_up)
-                -1 -> mView.context.getDrawable(R.drawable.ic_action_trending_down)
+                1 -> itemView.context.getDrawable(R.drawable.ic_action_trending_up)
+                -1 -> itemView.context.getDrawable(R.drawable.ic_action_trending_down)
                 else -> null
             }
             val color = when (coin.isPositiveBalance()) {
@@ -126,14 +115,10 @@ class RecyclerViewAdapter(
                     Color.GRAY
                 }
             }
-            itemDataBinding.percentage.setBackgroundColor(color)
-            itemDataBinding.growth.setImageDrawable(drawable)
+            binding.percentage.setBackgroundColor(color)
+            binding.growth.setImageDrawable(drawable)
 
-            itemDataBinding.details.visibility = GONE
+            binding.details.visibility = GONE
         }
-    }
-
-    interface OnListFragmentInteractionListener {
-        fun onListFragmentInteraction(item: Datum)
     }
 }

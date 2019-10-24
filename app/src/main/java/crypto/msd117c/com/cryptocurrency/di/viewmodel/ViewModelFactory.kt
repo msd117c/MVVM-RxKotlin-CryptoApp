@@ -4,17 +4,15 @@ import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
 import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
-import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
 class ViewModelFactory @Inject constructor(
-    private val coinsRepository: CoinsRepository,
-    private val networkManager: NetworkManager
+    private val coinsRepository: CoinsRepository
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(coinsRepository, networkManager) as T
+        return MainViewModel(coinsRepository) as T
     }
 
 }

@@ -1,8 +1,8 @@
 package crypto.msd117c.com.cryptocurrency.util.extensions
 
-import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import java.math.RoundingMode
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -21,20 +21,28 @@ val String?.normalize: String
 
 val String?.comfy: String
     get() {
-        if (this == "N/A") return this
-        var inputNum = this
-        val spittedNub = this!!.split(GlobalValues.decimalSeparator)
-        var decimalNum = ""
-        if (spittedNub.size == 2) {
-            inputNum = spittedNub[0]
-            decimalNum = GlobalValues.decimalSeparator + spittedNub[1]
+        if (this == "N/A" || this == null) return "N/A"
+        val format = NumberFormat.getCurrencyInstance()
+        val numberFormat = (format as DecimalFormat).decimalFormatSymbols
+        numberFormat.currencySymbol = ""
+        format.decimalFormatSymbols = numberFormat
+        format.isDecimalSeparatorAlwaysShown = false
+        val number = if (contains(",") && !contains(".")) {
+            replace(",", ".").toDouble()
+        } else {
+            toDouble()
         }
-
-        val inputDouble = inputNum!!.toDouble()
-        val myFormatter = DecimalFormat("###,###")
-        val output = myFormatter.format(inputDouble)
-
-        return output + decimalNum
+        val result = format.format(number)
+        return if (number % 1 == 0.0
+        ) {
+            if (result.length > 4) {
+                result.substring(0, result.length - 4)
+            } else {
+                result
+            }
+        } else {
+            result
+        }
     }
 
 val String?.toDate: String

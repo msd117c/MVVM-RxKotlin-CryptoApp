@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class CoinsNetwork @Inject constructor(private val service: CoinsService) {
 
-    fun retrieveLatestCoins(request: HashMap<String, String>): Observable<CoinResponse> =
-        service.retrieveCoins(request)
+    fun retrieveLatestCoins(): Observable<CoinResponse> =
+        service.retrieveCoins()
 
 }

@@ -7,91 +7,78 @@ import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Toast
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.MainActivityBinding
 import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelFactory
-import crypto.msd117c.com.cryptocurrency.domain.coins.model.Datum
+import crypto.msd117c.com.cryptocurrency.modules.main.ui.adapter.RecyclerViewAdapter
 import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
 import crypto.msd117c.com.cryptocurrency.util.Constants
-import crypto.msd117c.com.cryptocurrency.util.GlobalValues
 import crypto.msd117c.com.cryptocurrency.util.ViewModelStates
 import dagger.android.AndroidInjection
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInteractionListener {
-
-    @Inject
-    lateinit var lifeCycle: MainLifeCycle
+class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var alertDialog: AlertDialog
-    private lateinit var mainActivityBinding: MainActivityBinding
-    private lateinit var viewModel: MainViewModel
+    private var alertDialog: AlertDialog? = null
+    private var listAdapter: RecyclerViewAdapter? = null
+
+    private lateinit var binding: MainActivityBinding
+    lateinit var viewModel: MainViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        mainActivityBinding = DataBindingUtil.setContentView(this, R.layout.main_activity)
+        binding = DataBindingUtil.setContentView<MainActivityBinding>(this, R.layout.main_activity)
+
+        configureViewModel()
+        configureView()
+        initActivity()
     }
 
     fun configureViewModel() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(MainViewModel::class.java)
 
-        // Update UI according to ViewModel's state
         viewModel.state.observe(this, Observer {
             when (it) {
-                is ViewModelStates.Loading -> {
-                    // Clear the adapter
-                    mainActivityBinding.list.adapter = null
-                    mainActivityBinding.swipe.isRefreshing = true
-                }
-                is ViewModelStates.Loaded -> {
-                    // Clear the adapter
-                    mainActivityBinding.list.adapter = null
-                    // Load the adapter
-                    mainActivityBinding.list.adapter = RecyclerViewAdapter(it.list, this)
-                    mainActivityBinding.swipe.isRefreshing = false
-                }
+                is ViewModelStates.Loading ->
+                    binding.swipe.isRefreshing = true
+                is ViewModelStates.Loaded ->
+                    binding.swipe.isRefreshing = false
+
                 is ViewModelStates.Error -> {
-                    mainActivityBinding.swipe.isRefreshing = false
-                    when (it.type) {
-                        Constants.NO_CONNECTION_ERROR -> showAlertDialog(Constants.NO_CONNECTION_ERROR)
-                        Constants.DATA_ERROR -> showAlertDialog(Constants.DATA_ERROR)
-                        else -> showAlertDialog(Constants.UNKNOWN_ERROR)
-                    }
+                    binding.swipe.isRefreshing = false
+                    showAlertDialog(it.type)
                 }
+            }
+        })
+        viewModel.list.observe(this, Observer { list ->
+            list?.let { nonNullList ->
+                listAdapter?.mValues = nonNullList
+                listAdapter?.notifyDataSetChanged()
             }
         })
     }
 
     fun configureView() {
-        mainActivityBinding.list.layoutManager = LinearLayoutManager(this)
-        // Clear the adapter when create all
-        mainActivityBinding.list.adapter = null
+        listAdapter = RecyclerViewAdapter(
+            mutableListOf()
+        )
 
-        mainActivityBinding.swipe.setOnRefreshListener {
-            viewModel.retrieveResponse(getString(R.string.api_key))
+        binding.list.apply {
+            layoutManager = LinearLayoutManager(this@MainActivity)
+            adapter = listAdapter
+        }
+        binding.swipe.setOnRefreshListener {
+            viewModel.retrieveResponse(true)
         }
     }
 
-    override fun onListFragmentInteraction(item: Datum) {
-        Toast.makeText(this, item.name, Toast.LENGTH_LONG).show()
-    }
-
-    // Auxiliary Functions to make the code more clear
-    fun setGlobalValues() {
-        GlobalValues.decimalSeparator = getString(R.string.decimal_separator)
-        GlobalValues.thousandSeparator = getString(R.string.thounsand_separator)
-    }
-
-    fun checkData() {
-        if (mainActivityBinding.list.adapter == null) {
-            viewModel.loadData(getString(R.string.api_key))
-        }
+    fun initActivity() {
+        viewModel.retrieveResponse()
     }
 
     private fun showAlertDialog(errorType: Int) {
@@ -104,20 +91,20 @@ class MainActivity : AppCompatActivity(), RecyclerViewAdapter.OnListFragmentInte
                 }
             )
             .setPositiveButton(getString(R.string.retry)) { _, _ ->
-                viewModel.retrieveResponse(
-                    getString(R.string.api_key)
-                )
+                viewModel.retrieveResponse(true)
             }
             .setNegativeButton(getString(R.string.exit)) { _, _ -> finish() }
             .setCancelable(false)
             .show()
     }
 
-    fun dismissDialog() {
-        if (::alertDialog.isInitialized && alertDialog.isShowing) {
-            alertDialog.dismiss()
+    override fun onDestroy() {
+        super.onDestroy()
+        alertDialog?.let { dialog ->
+            if (dialog.isShowing) {
+                dialog.dismiss()
+            }
         }
     }
 
-    fun getBinding(): MainActivityBinding = mainActivityBinding
 }

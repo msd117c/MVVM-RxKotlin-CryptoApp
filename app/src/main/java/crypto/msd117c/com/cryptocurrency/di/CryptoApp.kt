@@ -8,7 +8,7 @@ import dagger.android.DispatchingAndroidInjector
 import dagger.android.HasActivityInjector
 import javax.inject.Inject
 
-class CryptoApp : Application(), HasActivityInjector, BaseApplication {
+open class CryptoApp : Application(), HasActivityInjector, BaseApplication {
 
     override fun getContext(): Context = applicationContext
 
