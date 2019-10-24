@@ -3,6 +3,7 @@ package crypto.msd117c.com.cryptocurrency.modules.main
 import android.app.Application
 import crypto.msd117c.com.cryptocurrency.TestNetworkModule
 import crypto.msd117c.com.cryptocurrency.di.*
+import crypto.msd117c.com.cryptocurrency.di.test.CryptoAppTest
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule

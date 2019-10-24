@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.StrictMode
 import androidx.test.runner.AndroidJUnitRunner
-import crypto.msd117c.com.cryptocurrency.di.CryptoAppTest
+import crypto.msd117c.com.cryptocurrency.di.test.CryptoAppTest
 
 class CustomTestRunner : AndroidJUnitRunner() {
 

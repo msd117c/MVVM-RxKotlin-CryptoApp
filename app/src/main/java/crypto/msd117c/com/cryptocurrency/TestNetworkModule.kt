@@ -1,7 +1,7 @@
 package crypto.msd117c.com.cryptocurrency
 
 import androidx.annotation.VisibleForTesting
-import crypto.msd117c.com.cryptocurrency.di.RetrofitInstrumentedTestInstance
+import crypto.msd117c.com.cryptocurrency.di.test.RetrofitInstrumentedTestInstance
 import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
 import dagger.Module
 import dagger.Provides

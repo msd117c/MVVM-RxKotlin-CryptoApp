@@ -1,6 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.utils
 
-import crypto.msd117c.com.cryptocurrency.di.CryptoAppTest
+import crypto.msd117c.com.cryptocurrency.di.test.CryptoAppTest
 import org.junit.After
 
 abstract class BaseTest constructor(size: Int) {

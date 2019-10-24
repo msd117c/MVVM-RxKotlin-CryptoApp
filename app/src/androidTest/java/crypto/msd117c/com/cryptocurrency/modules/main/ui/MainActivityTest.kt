@@ -63,7 +63,7 @@ class MainActivityTest {
         activityRule.launchActivity(Intent())
 
         idlingResource = WaitingForViewModelStateResource(
-            activityRule.activity.viewModel.list,
+            activityRule.activity.viewModel.state,
             activityRule.activity
         )
         IdlingRegistry.getInstance().register(idlingResource)

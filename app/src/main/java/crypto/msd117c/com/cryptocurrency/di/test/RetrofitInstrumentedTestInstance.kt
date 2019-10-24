@@ -1,4 +1,4 @@
-package crypto.msd117c.com.cryptocurrency.di
+package crypto.msd117c.com.cryptocurrency.di.test
 
 import com.google.gson.GsonBuilder
 import crypto.msd117c.com.cryptocurrency.domain.NoConnectionException
