@@ -1,11 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.di
 
 import crypto.msd117c.com.cryptocurrency.BuildConfig
-import crypto.msd117c.com.cryptocurrency.domain.NoConnectionException
-import crypto.msd117c.com.cryptocurrency.domain.coins.repository.network.CoinsNetwork
-import crypto.msd117c.com.cryptocurrency.domain.coins.repository.network.CoinsService
-import crypto.msd117c.com.cryptocurrency.domain.network.NetworkManager
-import crypto.msd117c.com.cryptocurrency.util.Constants
+import crypto.msd117c.com.cryptocurrency.constants.ApiConstants
 import dagger.Module
 import dagger.Provides
 import io.reactivex.schedulers.Schedulers
@@ -20,14 +16,14 @@ import java.util.concurrent.TimeUnit
 class NetworkModule {
 
     @Provides
-    fun provideRetrofitClient(networkManager: NetworkManager): Retrofit = Retrofit.Builder()
-        .baseUrl(Constants.BASE_URL)
-        .client(provideHttpClient(networkManager))
+    fun provideRetrofitClient(): Retrofit = Retrofit.Builder()
+        .baseUrl(ApiConstants.BASE_URL)
+        .client(provideHttpClient())
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.createWithScheduler(Schedulers.io()))
         .build()
 
-    private fun provideHttpClient(networkManager: NetworkManager): OkHttpClient {
+    private fun provideHttpClient(): OkHttpClient {
         val client = OkHttpClient.Builder()
         if (BuildConfig.DEBUG) {
             val logging = HttpLoggingInterceptor()
@@ -40,13 +36,9 @@ class NetworkModule {
 
             val url =
                 request.url().newBuilder()
-                    .addQueryParameter(Constants.API_KEY_ID, Constants.API_KEY)
+                    .addQueryParameter(ApiConstants.API_KEY_ID, ApiConstants.API_KEY)
                     .build()
             request = request.newBuilder().url(url).build()
-
-            if (!networkManager.verifyAvailableNetwork()) {
-                throw NoConnectionException()
-            }
 
             chain.proceed(request)
         }

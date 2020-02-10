@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: "androidx.navigation.safeargs.kotlin"
+
 android {
     compileSdkVersion 28
     defaultConfig {
@@ -32,6 +34,9 @@ android {
     testOptions {
         unitTests.returnDefaultValues = true
     }
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
 }
 
 dependencies {
@@ -39,18 +44,12 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
 
-    // dagger
-    kapt "com.google.dagger:dagger-compiler:$dagger_version"
-    implementation "com.google.dagger:dagger:$dagger_version"
-
-    // dagger android
-    kapt "com.google.dagger:dagger-android-processor:$dagger_version"
-    implementation "com.google.dagger:dagger-android:$dagger_version"
-    implementation "com.google.dagger:dagger-android-support:$dagger_version"
+    implementation "com.google.dagger:dagger:2.26"
+    kapt "com.google.dagger:dagger-compiler:2.26"
 
     // rx kotlin
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
@@ -61,7 +60,7 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation "com.squareup.retrofit2:retrofit:2.6.0"
     implementation "com.squareup.retrofit2:adapter-rxjava2:2.4.0"
-    implementation "com.squareup.retrofit2:converter-gson:2.4.0"
+    implementation "com.squareup.retrofit2:converter-gson:2.5.0"
 
     implementation "io.reactivex.rxjava2:rxandroid:2.1.0"
     implementation "com.squareup.okhttp3:okhttp:$verOkHttp3"
@@ -82,11 +81,15 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    testImplementation "io.mockk:mockk:1.9.3"
-    androidTestImplementation("io.mockk:mockk-android:1.9.3"){ exclude module: 'objenesis' }
-    androidTestImplementation 'org.objenesis:objenesis:2.6'
-
     implementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
     androidTestImplementation 'com.squareup.okhttp3:mockwebserver:3.12.0'
     testImplementation("com.squareup.okhttp3:mockwebserver:3.12.0")
+    testImplementation 'org.mockito:mockito-core:3.2.4'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0-alpha01"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.0-alpha01"
+
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
 }

@@ -2,17 +2,14 @@ package crypto.msd117c.com.cryptocurrency.di.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import crypto.msd117c.com.cryptocurrency.domain.coins.repository.CoinsRepository
-import crypto.msd117c.com.cryptocurrency.modules.main.viewmodel.MainViewModel
+import dagger.Lazy
 import javax.inject.Inject
 
 @Suppress("UNCHECKED_CAST")
-class ViewModelFactory @Inject constructor(
-    private val coinsRepository: CoinsRepository
-) : ViewModelProvider.NewInstanceFactory() {
+class ViewModelFactory<V : ViewModel> @Inject constructor(private val viewModel: Lazy<V>) :
+    ViewModelProvider.Factory {
 
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(coinsRepository) as T
-    }
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel?> create(modelClass: Class<T>): T = viewModel.get() as T
 
 }
