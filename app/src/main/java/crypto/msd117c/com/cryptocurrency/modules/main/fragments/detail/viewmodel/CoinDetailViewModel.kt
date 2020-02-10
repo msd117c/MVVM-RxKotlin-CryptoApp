@@ -1,9 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.viewmodel
 
-import crypto.msd117c.com.cryptocurrency.data.model.detail.CoinDetail
-import crypto.msd117c.com.cryptocurrency.data.model.detail.UrlItem
-import crypto.msd117c.com.cryptocurrency.data.model.detail.UrlLink
-import crypto.msd117c.com.cryptocurrency.data.model.detail.UrlSection
+import crypto.msd117c.com.cryptocurrency.data.model.detail.*
 
 class CoinDetailViewModel(private val coinDetail: CoinDetail) {
 
@@ -56,7 +53,14 @@ class CoinDetailViewModel(private val coinDetail: CoinDetail) {
 
     fun getCategory(): String = coinDetail.category ?: "N/A"
 
-    fun getPlatform(): String = coinDetail.platform ?: "N/A"
+    fun getPlatform(): Platform = coinDetail.platform ?: Platform()
+
+    fun getPlatformName(): String =
+        "${coinDetail.platform?.name ?: "N/A"} - ${coinDetail.platform?.symbol ?: "N/A"}"
+
+    fun getPlatformSlug(): String = coinDetail.platform?.slug ?: "N/A"
+
+    fun getPlatformTokenAddress(): String = coinDetail.platform?.tokenAddress ?: "N/A"
 
     fun getSlug(): String = coinDetail.slug ?: "N/A"
 

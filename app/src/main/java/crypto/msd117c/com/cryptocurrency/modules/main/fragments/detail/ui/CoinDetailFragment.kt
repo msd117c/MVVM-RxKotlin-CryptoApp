@@ -1,6 +1,7 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.ui
 
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -12,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.chip.Chip
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.FragmentCoinDetailBinding
 import crypto.msd117c.com.cryptocurrency.di.CryptoApp
@@ -82,10 +84,10 @@ class CoinDetailFragment : Fragment() {
     }
 
     private fun configureView() {
-        tags_list.apply {
+        /*tags_list.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = tagsAdapter
-        }
+        }*/
 
         urls_list.apply {
             layoutManager = LinearLayoutManager(context)
@@ -106,7 +108,12 @@ class CoinDetailFragment : Fragment() {
                     error_layout.visibility = GONE
                     coin_detail_layout.visibility = VISIBLE
                     binding.coin = state.coinDetailUiModel.coin
-                    tagsAdapter.setItems(state.coinDetailUiModel.coin.getTags())
+                    //tagsAdapter.setItems(state.coinDetailUiModel.coin.getTags())
+                    state.coinDetailUiModel.coin.getTags().forEach { tag ->
+                        val chip = Chip(context)
+                        chip.text = tag
+                        tags_group.addView(chip)
+                    }
                     urlsAdapter.setItems(state.coinDetailUiModel.coin.getUrls())
                 }
                 is Error -> {
