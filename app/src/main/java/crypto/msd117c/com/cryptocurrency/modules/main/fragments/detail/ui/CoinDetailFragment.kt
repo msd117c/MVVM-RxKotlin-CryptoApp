@@ -1,7 +1,6 @@
 package crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.ui
 
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -18,7 +17,6 @@ import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.FragmentCoinDetailBinding
 import crypto.msd117c.com.cryptocurrency.di.CryptoApp
 import crypto.msd117c.com.cryptocurrency.di.viewmodel.ViewModelFactory
-import crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.adapter.TagsAdapter
 import crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.adapter.UrlsAdapter
 import crypto.msd117c.com.cryptocurrency.modules.main.fragments.detail.viewmodel.*
 import kotlinx.android.synthetic.main.fragment_coin_detail.*
@@ -34,9 +32,6 @@ class CoinDetailFragment : Fragment() {
     lateinit var coinsDetailFragmentViewModelFactory: ViewModelFactory<CoinDetailFragmentViewModel>
 
     private lateinit var coinDetailFragmentViewModel: CoinDetailFragmentViewModel
-
-    @Inject
-    lateinit var tagsAdapter: TagsAdapter
 
     @Inject
     lateinit var urlsAdapter: UrlsAdapter
@@ -84,11 +79,6 @@ class CoinDetailFragment : Fragment() {
     }
 
     private fun configureView() {
-        /*tags_list.apply {
-            layoutManager = LinearLayoutManager(context)
-            adapter = tagsAdapter
-        }*/
-
         urls_list.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = urlsAdapter
@@ -108,7 +98,6 @@ class CoinDetailFragment : Fragment() {
                     error_layout.visibility = GONE
                     coin_detail_layout.visibility = VISIBLE
                     binding.coin = state.coinDetailUiModel.coin
-                    //tagsAdapter.setItems(state.coinDetailUiModel.coin.getTags())
                     state.coinDetailUiModel.coin.getTags().forEach { tag ->
                         val chip = Chip(context)
                         chip.text = tag

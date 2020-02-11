@@ -10,6 +10,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import crypto.msd117c.com.cryptocurrency.R
 import crypto.msd117c.com.cryptocurrency.databinding.FragmentCoinsListBinding
@@ -64,8 +65,12 @@ class CoinsListFragment : Fragment() {
         coins_swipe_list.visibility = GONE
 
         coins_list.apply {
-            layoutManager = LinearLayoutManager(context)
+            layoutManager = GridLayoutManager(context, 2)
             adapter = coinsAdapter
+        }
+
+        coins_swipe_list.setOnRefreshListener {
+            coinsListViewModel.getLatestCoins()
         }
     }
 
@@ -75,18 +80,19 @@ class CoinsListFragment : Fragment() {
                 Loading -> {
                     loading_layout.visibility = VISIBLE
                     error_layout.visibility = GONE
-                    coins_swipe_list.visibility = GONE
                 }
                 is Loaded -> {
                     loading_layout.visibility = GONE
                     error_layout.visibility = GONE
                     coins_swipe_list.visibility = VISIBLE
+                    coins_swipe_list.isRefreshing = false
                     coinsAdapter.setItems(state.mainUiModel.listOfCoins)
                 }
                 is Error -> {
                     loading_layout.visibility = GONE
                     error_layout.visibility = VISIBLE
                     coins_swipe_list.visibility = GONE
+                    coins_swipe_list.isRefreshing = false
                     error_message.text = when (state.error) {
                         EmptyList -> getString(R.string.data_error)
                         NoConnection -> getString(R.string.no_connection)
